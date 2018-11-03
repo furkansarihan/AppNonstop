@@ -31,7 +31,7 @@ namespace Nonstop
             using (var reader = new System.IO.StreamReader(stream))
             {
                 var json = reader.ReadToEnd();
-                System.Console.WriteLine(json);
+                //System.Console.WriteLine(json);
                 var data = JsonConvert.DeserializeObject<Track>(json);
             }
 
@@ -40,7 +40,7 @@ namespace Nonstop
             urhoSurface.VerticalOptions = LayoutOptions.FillAndExpand;
             Content = new StackLayout
             {
-                Padding = new Thickness(1, 1, 1, 1),
+                
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Children = { urhoSurface }
             };
@@ -51,7 +51,7 @@ namespace Nonstop
         {
             base.OnAppearing();
             urhoGame = await urhoSurface.Show<Game>(new ApplicationOptions(assetsFolder: null) { Orientation = ApplicationOptions.OrientationType.Portrait });
-            gameManager = new GameManager(urhoGame, "sampleTrackId");
+            gameManager = new GameManager(urhoGame, "06AKEBrKUckW0KREUWRnvT"); // track_id for test data
         }
     }
 }

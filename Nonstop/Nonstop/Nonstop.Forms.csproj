@@ -14,10 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Analysis\Response\06AKEBrKUckW0KREUWRnvT.json" />
     <None Remove="track.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Analysis\Response\06AKEBrKUckW0KREUWRnvT.json" />
     <EmbeddedResource Include="Spotify\track.json" />
   </ItemGroup>
 
@@ -41,5 +43,9 @@
     <None Update="Spotify\track.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Analysis\Runtime\" />
   </ItemGroup>
 </Project>
