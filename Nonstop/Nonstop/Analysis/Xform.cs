@@ -20,14 +20,14 @@ namespace Nonstop.Forms.Analysis
             using (var reader = new System.IO.StreamReader(stream))
             {
                 var json = reader.ReadToEnd();
-                var data = JsonConvert.DeserializeObject<All>(json);
+                this.data = JsonConvert.DeserializeObject<All>(json);
             }
         }
     }
     class All
     {
         [JsonProperty("beats")]
-        private Beat[] beats { get; set; }
+        public Beat[] beats { get; set; }
     }
     class Beat
     {
@@ -37,5 +37,10 @@ namespace Nonstop.Forms.Analysis
         private double duration { get; set; }
         [JsonProperty("confidence")]
         private double confidence { get; set; }
+
+        public uint getStartMillis()
+        {
+            return (uint)(start * (double)1000);
+        }
     }
 }

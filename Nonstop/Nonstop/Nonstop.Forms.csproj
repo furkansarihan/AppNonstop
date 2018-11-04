@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Game\NonstopTime.cs" />
     <Compile Remove="UrhoApp.cs" />
   </ItemGroup>
 

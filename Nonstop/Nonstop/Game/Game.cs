@@ -21,16 +21,19 @@ namespace Nonstop.Forms.Game
     class Game : Urho.Application
     {
         bool movementsEnabled;
+        bool hasXform = false;
+        bool first = true;
         Scene scene;
         Node plotNode;
+        Node cameraNode;
         Camera camera;
         Octree octree;
+        Text timeText;
         List<Piece> pieces;
 
         Xform runtimeData;
-
-        public Bar SelectedBar { get; private set; }
-
+        NonstopTime nonstopTime;
+        
         public IEnumerable<Piece> Bars => pieces;
 
         [Preserve]
@@ -57,6 +60,8 @@ namespace Nonstop.Forms.Game
         {
             Input.SubscribeToTouchEnd(OnTouched);
 
+            nonstopTime = new NonstopTime(Urho.Time.SystemTime);
+
             scene = new Scene();
             octree = scene.CreateComponent<Octree>();
 
@@ -65,46 +70,30 @@ namespace Nonstop.Forms.Game
             var plane = baseNode.CreateComponent<StaticModel>();
             plane.Model = CoreAssets.Models.Plane;
 
-            var cameraNode = scene.CreateChild();
+            // Camera
+            cameraNode = scene.CreateChild();
             camera = cameraNode.CreateComponent<Camera>();
-            cameraNode.Position = new Vector3(0, 0, -10);
+            cameraNode.Position = new Vector3(0, 0, 0);
 
+            // Light
             Node lightNode = cameraNode.CreateChild();
             var light = lightNode.CreateComponent<Light>();
             light.LightType = LightType.Point;
-            light.Range = 1000;
+            light.Range = 5000;
             light.Brightness = 1.3f;
 
             int size = 20;
             baseNode.Scale = new Vector3(size * 1.5f, 1, size * 1.5f);
             pieces = new List<Piece>(size * size);
-            /*for (var i = 0f; i < size * 1.5f; i += 1.5f)
-            {
-                for (var j = 0f; j < size * 1.5f; j += 1.5f)
-                {
-                    var boxNode = plotNode.CreateChild();
-                    boxNode.Position = new Vector3(size / 2f - i, 0, size / 2f - j);
-                    var box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
-                    boxNode.AddComponent(box);
-                    pieces.Add(box);
-                }
-            }*/
-
-            Node boxNode = plotNode.CreateChild();
-            boxNode.Position = new Vector3(0, -2, 30);
-            Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
-            boxNode.AddComponent(box);
-            //pieces.Add(box);
-
-            //SelectedBar = bars.First();
-            //SelectedBar.Select();
-
-            try
-            {
-                await plotNode.RunActionsAsync(new EaseBackOut(new RotateBy(2f, 0, 360, 0)));
-            }
-            catch (OperationCanceledException) { }
-            movementsEnabled = true;
+            
+            // UI
+            timeText = new Text();
+            timeText.HorizontalAlignment = HorizontalAlignment.Center;
+            timeText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
+            timeText.SetColor(Color.White);
+            UI.Root.AddChild(timeText);
+            Input.SetMouseVisible(true, false);
+            
         }
 
         void OnTouched(TouchEndEventArgs e)
@@ -114,36 +103,51 @@ namespace Nonstop.Forms.Game
             if (results != null)
             {
                 var bar = results.Value.Node?.Parent?.GetComponent<Bar>();
-                if (SelectedBar != bar)
-                {
-                    SelectedBar?.Deselect();
-                    SelectedBar = bar;
-                    SelectedBar?.Select();
-                }
             }
         }
 
         protected override void OnUpdate(float timeStep)
         {
             base.OnUpdate(timeStep);
-        }
+            // Refresh time 
+            nonstopTime.refreshTime();
+            // Display time
+            timeText.Value = nonstopTime.getDisplayableTime();
+            // Move Camera
+            cameraNode.SetWorldPosition(new Vector3(0,0,nonstopTime.currentMillis / 100));
 
+            if (hasXform && this.first)
+            {
+                this.setPieces();
+                first = false;
+            }
+        }
         public void Rotate(float toValue)
         {
             plotNode.Rotate(new Quaternion(0, toValue, 0), TransformSpace.Local);
         }
 
-        void SetupViewport()
+        async void SetupViewport()
         {
             var renderer = Renderer;
             var vp = new Viewport(Context, scene, camera, null);
             renderer.SetViewport(0, vp);
         }
-        public void setXform(Xform data)
+        public async void setXform(Xform data)
         {
             this.runtimeData = data;
+            this.hasXform = true;
         }
-        
+        async void setPieces()
+        {
+            foreach (Beat b in runtimeData.data.beats)
+            {
+                var boxNode = plotNode.CreateChild();
+                boxNode.Position = new Vector3(0, -2, b.getStartMillis() / 100);
+                Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
+                boxNode.AddComponent(box);
+            }
+        }
     }
     public class Piece : Component
     {
@@ -167,81 +171,29 @@ namespace Nonstop.Forms.Game
 
             base.OnAttachedToNode(node);
         }
-        protected override void OnUpdate(float timeStep)
-        {
-            itself.SetWorldPosition(new Vector3(0,0,itself.WorldPosition.Z - timeStep * speed));
-            if (itself.WorldPosition.Z < -5)
-            {
-                itself.SetWorldPosition(new Vector3(0, 0, 30));
-                this.box.Color = new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f);
-            }
-        }
     }
-    public class Bar : Component
+    public class NonstopTime
     {
-        Node barNode;
-        Node textNode;
-        Text3D text3D;
-        Color color;
-        float lastUpdateValue;
+        uint startTime; // init position of NonstopTime object
+        public uint currentMillis   { get; set; } // for calculate
+        public string currentSecond { get; set; } // for display
+        public string currentMinute { get; set; } // for display
 
-        public float Value
+        public NonstopTime(uint start)
         {
-            get { return barNode.Scale.Y; }
-            set { barNode.Scale = new Vector3(1, value < 0.3f ? 0.3f : value, 1); }
+            this.startTime = start;
+            refreshTime();
         }
-
-        public void SetValueWithAnimation(float value) => barNode.RunActionsAsync(new EaseBackOut(new ScaleTo(3f, 1, value, 1)));
-
-        public Bar(Color color)
+        public void refreshTime()
         {
-            this.color = color;
-            ReceiveSceneUpdates = true;
+            this.currentMillis = Urho.Time.SystemTime - startTime;
+            this.currentSecond = ((this.currentMillis / 1000) % 60).ToString();
+            this.currentMinute = (this.currentMillis / 60000).ToString();
         }
-
-        public override void OnAttachedToNode(Node node)
+        public string getDisplayableTime()
         {
-            barNode = node.CreateChild();
-            barNode.Scale = new Vector3(1, 0, 1); //means zero height
-            var box = barNode.CreateComponent<Box>();
-            box.Color = color;
-
-            textNode = node.CreateChild();
-            textNode.Rotate(new Quaternion(0, 180, 0), TransformSpace.World);
-            textNode.Position = new Vector3(0, 10, 0);
-            text3D = textNode.CreateComponent<Text3D>();
-            text3D.SetFont(CoreAssets.Fonts.AnonymousPro, 60);
-            text3D.TextEffect = TextEffect.Stroke;
-
-            base.OnAttachedToNode(node);
+            return this.currentMinute + ":" + this.currentSecond;
         }
-
-        protected override void OnUpdate(float timeStep)
-        {
-            var pos = barNode.Position;
-            var scale = barNode.Scale;
-            barNode.Position = new Vector3(pos.X, scale.Y / 2f, pos.Z);
-            textNode.Position = new Vector3(0.5f, scale.Y + 0.2f, 0);
-            var newValue = (float)Math.Round(scale.Y, 1);
-            if (lastUpdateValue != newValue)
-                text3D.Text = newValue.ToString("F01", CultureInfo.InvariantCulture);
-            lastUpdateValue = newValue;
-        }
-
-        public void Deselect()
-        {
-            barNode.RemoveAllActions();//TODO: remove only "selection" action
-            barNode.RunActions(new EaseBackOut(new TintTo(1f, color.R, color.G, color.B)));
-        }
-
-        public void Select()
-        {
-            Selected?.Invoke(this);
-            // "blinking" animation
-            barNode.RunActions(new RepeatForever(new TintTo(0.3f, 1f, 1f, 1f), new TintTo(0.3f, color.R, color.G, color.B)));
-        }
-
-        public event Action<Bar> Selected;
     }
     public static class RandomHelper
     {

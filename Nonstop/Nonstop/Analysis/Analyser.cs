@@ -51,7 +51,7 @@ namespace Nonstop.Forms.Analysis
          * Input2: track id for spesific Spotify Track
          * Output: bool value for result of operations.
          **/
-        public bool setupXform(Xform runtimeData, String trackId)
+        public bool setupXform(ref Xform runtimeData, String trackId)
         {
             // Control path for existing generated runtime data
             // return false if do not exist
