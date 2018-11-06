@@ -23,10 +23,14 @@ namespace Nonstop.Forms.Game
         bool movementsEnabled;
         bool hasXform = false;
         bool first = true;
+
         Scene scene;
         Node plotNode;
+
         Node cameraNode;
-        Camera camera;
+        public static Camera camera;
+        Viewport vp;
+
         Octree octree;
         Text timeText;
         List<Piece> pieces;
@@ -75,12 +79,16 @@ namespace Nonstop.Forms.Game
             camera = cameraNode.CreateComponent<Camera>();
             cameraNode.Position = new Vector3(0, 0, 0);
 
+            /*Node table = cameraNode.CreateChild();
+            var obj = table.CreateComponent<Box>();
+            table.AddComponent(obj);*/
+
             // Light
             Node lightNode = cameraNode.CreateChild();
             var light = lightNode.CreateComponent<Light>();
-            light.LightType = LightType.Point;
-            light.Range = 5000;
-            light.Brightness = 1.3f;
+            light.LightType = LightType.Directional;
+            light.Range = 50;
+            light.Brightness = 3f;
 
             int size = 20;
             baseNode.Scale = new Vector3(size * 1.5f, 1, size * 1.5f);
@@ -109,13 +117,20 @@ namespace Nonstop.Forms.Game
         protected override void OnUpdate(float timeStep)
         {
             base.OnUpdate(timeStep);
-            // Refresh time 
-            nonstopTime.refreshTime();
+            // Update time 
+            nonstopTime.updateTime();
             // Display time
             timeText.Value = nonstopTime.getDisplayableTime();
             // Move Camera
-            cameraNode.SetWorldPosition(new Vector3(0,0,nonstopTime.currentMillis / 100));
-
+            cameraNode.SetWorldPosition(new Vector3(0,0,((nonstopTime.currentMillis) / 100)));
+            
+            // Check for section change
+            if (hasXform && runtimeData.data.isSectionChanged(nonstopTime.currentMillis))
+            {
+                // Change background
+                vp.SetClearColor(new Color(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f)));
+            }
+            // This should be remove
             if (hasXform && this.first)
             {
                 this.setPieces();
@@ -130,7 +145,8 @@ namespace Nonstop.Forms.Game
         async void SetupViewport()
         {
             var renderer = Renderer;
-            var vp = new Viewport(Context, scene, camera, null);
+            vp = new Viewport(Context, scene, camera, null);
+            vp.SetClearColor(Color.Black);
             renderer.SetViewport(0, vp);
         }
         public async void setXform(Xform data)
@@ -146,6 +162,17 @@ namespace Nonstop.Forms.Game
                 boxNode.Position = new Vector3(0, -2, b.getStartMillis() / 100);
                 Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
                 boxNode.AddComponent(box);
+            }
+            foreach (Segment s in runtimeData.data.segments)
+            {
+                if (s.getIndex() != -1)
+                {
+                    var boxNode = plotNode.CreateChild();
+                    boxNode.Position = new Vector3((s.getIndex() - 6) / 2, 2, s.getStartMillis() / 100);
+                    Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
+                    boxNode.AddComponent(box);
+                }
+                
             }
         }
     }
@@ -171,6 +198,10 @@ namespace Nonstop.Forms.Game
 
             base.OnAttachedToNode(node);
         }
+        /*protected override void OnUpdate(float timeStep)
+        {
+            base.OnUpdate(timeStep);
+        }*/
     }
     public class NonstopTime
     {
@@ -182,9 +213,9 @@ namespace Nonstop.Forms.Game
         public NonstopTime(uint start)
         {
             this.startTime = start;
-            refreshTime();
+            updateTime();
         }
-        public void refreshTime()
+        public void updateTime()
         {
             this.currentMillis = Urho.Time.SystemTime - startTime;
             this.currentSecond = ((this.currentMillis / 1000) % 60).ToString();
@@ -193,6 +224,10 @@ namespace Nonstop.Forms.Game
         public string getDisplayableTime()
         {
             return this.currentMinute + ":" + this.currentSecond;
+        }
+        public void refreshTime(uint newMillis)
+        {
+
         }
     }
     public static class RandomHelper
