@@ -10,13 +10,14 @@ namespace Nonstop
         public App()
         {
             InitializeComponent();
-
             MainPage = new MainPage();
         }
 
         protected override void OnStart()
         {
             // Handle when your app starts
+            // Making connection to appRemote
+            // Generating response objects.
         }
 
         protected override void OnSleep()

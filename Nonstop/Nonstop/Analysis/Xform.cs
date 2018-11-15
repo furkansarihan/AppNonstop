@@ -28,6 +28,8 @@ namespace Nonstop.Forms.Analysis
     {
         int currentSection = 0;
 
+        [JsonProperty("track")]
+        public Track track { get; set; }
         [JsonProperty("beats")]
         public Beat[] beats { get; set; }
         [JsonProperty("segments")]
@@ -50,6 +52,10 @@ namespace Nonstop.Forms.Analysis
             }
 
             return false;
+        }
+        public uint getTrackDuration()
+        {
+            return (uint)(track.duration * (double)1000);
         }
     }
     class Beat
@@ -103,5 +109,12 @@ namespace Nonstop.Forms.Analysis
         {
             return (uint)(start * (double)1000);
         }
+    }
+    class Track
+    {
+        [JsonProperty("duration")]
+        public double duration { get; set; }
+        [JsonProperty("tempo")]
+        public double tempo { get; set; }
     }
 }

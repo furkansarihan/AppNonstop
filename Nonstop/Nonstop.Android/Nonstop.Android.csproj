@@ -104,6 +104,10 @@
     <Folder Include="Spotify\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Spotify.Android.AppRemote.Binder\Spotify.Android.AppRemote.Binder.csproj">
+      <Project>{aedd6d31-dbaf-4341-b3d0-c14a7c2c5d0d}</Project>
+      <Name>Spotify.Android.AppRemote.Binder</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nonstop\Nonstop.Forms.csproj">
       <Project>{01317d48-2259-43fc-8cea-74c6345ae799}</Project>
       <Name>Nonstop.Forms</Name>
