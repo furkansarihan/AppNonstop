@@ -46,7 +46,6 @@ namespace Nonstop
 
             Content = new StackLayout
             {
-                
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Children = { urhoSurface }
             };

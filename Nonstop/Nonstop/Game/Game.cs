@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -10,6 +10,7 @@ using Urho.Gui;
 using Urho.Shapes;
 
 using Nonstop.Forms.Analysis;
+using System.Threading.Tasks;
 
 namespace Nonstop.Forms.Game
 {
@@ -55,6 +56,10 @@ namespace Nonstop.Forms.Game
 
         protected override void Start()
         {
+            /**
+             * Start animation here
+             */
+            //System.Threading.Thread.Sleep(2000);
             base.Start();
             CreateScene();
             SetupViewport();
@@ -101,7 +106,6 @@ namespace Nonstop.Forms.Game
             timeText.SetColor(Color.White);
             UI.Root.AddChild(timeText);
             Input.SetMouseVisible(true, false);
-            
         }
 
         void OnTouched(TouchEndEventArgs e)
@@ -137,11 +141,23 @@ namespace Nonstop.Forms.Game
                 first = false;
             }
         }
-        public void Rotate(float toValue)
+        // Game paused outside of class
+        // AppRemote or native app invokers will causes this function to run.
+        void inGamePause()
         {
-            plotNode.Rotate(new Quaternion(0, toValue, 0), TransformSpace.Local);
-        }
 
+        }
+        // Game will continue to play with start animation
+        void inGameResume()
+        {
+
+        }
+        // this function invokes a function outside of a class
+        // and sends game result information to Nonstop
+        void endGame()
+        {
+            
+        }
         async void SetupViewport()
         {
             var renderer = Renderer;

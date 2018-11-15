@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Com.Spotify.Android.Appremote.Api;
 using Com.Spotify.Protocol.Client;
 using Com.Spotify.Protocol.Types;
 using Java.Lang;
 
-
-namespace Nonstop.Droid.Spotify
+namespace Nonstop
 {
     class SpotifyAndroidCommunicator
     {
         public static System.String CLIENT_ID = "2c769d49a6154b23847770985bb19957";
-        public static System.String REDIRECT_URI = "com.yourdomain.yourapp://callback";
+        public static System.String REDIRECT_URI = "Nonstop.Android://callback";
         public SpotifyAppRemote mSpotifyAppRemote;
         public Android.Content.Context androidContext;
 
@@ -46,16 +42,14 @@ namespace Nonstop.Droid.Spotify
         {
             Subscription.IEventCallback eventCallback = new EventCallback();
 
-            mSpotifyAppRemote.PlayerApi.Play("spotify:user:spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
-
+            //mSpotifyAppRemote.PlayerApi.Play("spotify:user:spotify:track:18mNRyfNGQvVfwTJo27sNR");
+            
             // Event object implemeted in class
             mSpotifyAppRemote.PlayerApi.SubscribeToPlayerState().SetEventCallback(eventCallback);
         }
     }
     class EventCallback : Java.Lang.Object, Subscription.IEventCallback
     {
-
-        //public IntPtr Handle => throw new NotImplementedException();
         
         public void Dispose()
         {
@@ -65,7 +59,6 @@ namespace Nonstop.Droid.Spotify
         public void OnEvent(Java.Lang.Object p0)
         {
             Track track = ((PlayerState)p0).Track;
-            throw new NotImplementedException();
         }
     }
     class ConnectorConnectionListener : Java.Lang.Object, IConnectorConnectionListener
