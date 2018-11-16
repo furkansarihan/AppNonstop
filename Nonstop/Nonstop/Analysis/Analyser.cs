@@ -28,9 +28,9 @@ namespace Nonstop.Forms.Analysis
             // Creating runtime data from api.spotify response json............
             // Writing data to path -> trackId.json
             var assembly = typeof(MainPage).GetTypeInfo().Assembly;
-            Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + ".json");
+            Stream strea = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + ".json");
 
-            using (var reader = new System.IO.StreamReader(stream))
+            using (var reader = new System.IO.StreamReader(strea))
             {
                 var json = reader.ReadToEnd();
                 var data = JsonConvert.DeserializeObject<All>(json);

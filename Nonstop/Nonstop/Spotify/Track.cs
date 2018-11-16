@@ -10,13 +10,13 @@ namespace Nonstop.Spotify
     class Track
     {
         [JsonProperty("id")]
-        private string id { get; set; }
+        public string id { get; set; }
         [JsonProperty("name")]
-        private string name { get; set; }
+        public string name { get; set; }
         [JsonProperty("album")]
-        private Album album { get; set; }
+        public Album album { get; set; }
         [JsonProperty("artists")]
-        private Artist[] artists { get; set; }
+        public Artist[] artists { get; set; }
 
     }
 }
