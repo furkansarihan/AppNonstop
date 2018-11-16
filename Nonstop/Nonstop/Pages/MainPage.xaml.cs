@@ -28,26 +28,39 @@ namespace Nonstop
             var assembly = typeof(MainPage).GetTypeInfo().Assembly;
             Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Spotify.track.json");
 
+            List<Spotify.Track> list = new List<Spotify.Track>();
+            Track t;
+            
             using (var reader = new System.IO.StreamReader(stream))
             {
                 var json = reader.ReadToEnd();
                 //System.Console.WriteLine(json);
-                var data = JsonConvert.DeserializeObject<Track>(json);
+                t = JsonConvert.DeserializeObject<Track>(json);
             }
+
+            for (int i = 0; i < 100; i++)
+                list.Add(t);
+
+            lst.ItemsSource = list;
+
             //**************json serializer***********************
 
             //**************Content*******************************
-            Content = new StackLayout
-            {
+            //Content = new StackLayout
+            //{
                 // Generate page here.
-            };
+            //};
             //**************Content*******************************
             
         }
         
-        public void trackClickListener(){ // listener for custom cell view...
-            // app.launchGame(trackCell.Text);
-            app.launchGame("06AKEBrKUckW0KREUWRnvT");
+        public void trackClickListener(object sender, ItemTappedEventArgs e)
+        { 
+            // listener for custom cell view...
+            var myListView = (ListView)sender;
+            var track = (Spotify.Track) myListView.SelectedItem;
+            app.contentUpdateGame();
+            app.launchGame(track.id);
         }
 
     }

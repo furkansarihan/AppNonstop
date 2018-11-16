@@ -41,7 +41,7 @@ namespace Nonstop.Forms.Game
 
         // public void end(Result gameresult);
         public void end(){
-            app.launchResultView();
+            //app.launchResultView();
         }
     }
 }
