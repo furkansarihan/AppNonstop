@@ -22,8 +22,11 @@ namespace Nonstop.Forms.Game
     class Game : Urho.Application
     {
         bool movementsEnabled;
-        bool hasXform = false;
         bool first = true;
+        bool hasXform = false;
+        bool hasGameManager = false;
+
+        GameManager gameManager;
 
         Scene scene;
         Node plotNode;
@@ -56,11 +59,8 @@ namespace Nonstop.Forms.Game
 
         protected override void Start()
         {
-            /**
-             * Start animation here
-             */
-            //System.Threading.Thread.Sleep(2000);
             base.Start();
+            //waitForXform();
             CreateScene();
             SetupViewport();
         }
@@ -134,11 +134,10 @@ namespace Nonstop.Forms.Game
                 // Change background
                 vp.SetClearColor(new Color(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f)));
             }
-            // This should be remove
-            if (hasXform && this.first)
-            {
+
+            if(hasXform && first){
                 this.setPieces();
-                first = false;
+                this.first = false;
             }
         }
         // Game paused outside of class
@@ -156,8 +155,18 @@ namespace Nonstop.Forms.Game
         // and sends game result information to Nonstop
         void endGame()
         {
-            
+            // gameManager.end(Result gameresult);
+            gameManager.end();
         }
+        
+        // This function includes a while loop that
+        // finishes it's work when Xform is here
+        void waitForXform(){
+            while(!hasXform){
+                this.setPieces();
+            }
+        }
+
         async void SetupViewport()
         {
             var renderer = Renderer;
@@ -169,6 +178,11 @@ namespace Nonstop.Forms.Game
         {
             this.runtimeData = data;
             this.hasXform = true;
+        }
+        public async void setGameManager(GameManager gameManager)
+        {
+            this.gameManager = gameManager;
+            this.hasGameManager = true;
         }
         async void setPieces()
         {

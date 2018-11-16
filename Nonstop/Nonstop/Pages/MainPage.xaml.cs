@@ -17,14 +17,12 @@ namespace Nonstop
 {
     public partial class MainPage : ContentPage
     {
-        UrhoSurface urhoSurface;
-        Slider musicControl;
-        Game urhoGame;
-        GameManager gameManager;
+        App app; // Application reference
 
-        public MainPage()
+        public MainPage(App appref)
         {
             InitializeComponent();
+            this.app = appref; // getting app reference
 
             //**************json serializer***********************
             var assembly = typeof(MainPage).GetTypeInfo().Assembly;
@@ -38,34 +36,19 @@ namespace Nonstop
             }
             //**************json serializer***********************
 
-            //**************UrhoSurface implementation************
-            urhoSurface = new UrhoSurface();
-            urhoSurface.VerticalOptions = LayoutOptions.FillAndExpand;
-            musicControl = new Slider(0, 400000, 0);
-            musicControl.ValueChanged += musicControlChanced;
-
+            //**************Content*******************************
             Content = new StackLayout
             {
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { urhoSurface }
+                // Generate page here.
             };
-            //**************UrhoSurface implementation************
-
-            //**************Spotify AppRemote Connection**********
-            
-            //**************Spotify AppRemote Connection**********
-        }
-
-        private void musicControlChanced(object sender, ValueChangedEventArgs e)
-        {
+            //**************Content*******************************
             
         }
-
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            urhoGame = await urhoSurface.Show<Game>(new ApplicationOptions(assetsFolder: null) { Orientation = ApplicationOptions.OrientationType.Portrait });
-            gameManager = new GameManager(urhoGame, "36YCdzT57us0LhDmCYtrNE"); // track_id for test data
+        
+        public void trackClickListener(){ // listener for custom cell view...
+            // app.launchGame(trackCell.Text);
+            app.launchGame("06AKEBrKUckW0KREUWRnvT");
         }
+
     }
 }

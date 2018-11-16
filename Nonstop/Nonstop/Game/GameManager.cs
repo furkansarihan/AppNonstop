@@ -8,13 +8,15 @@ namespace Nonstop.Forms.Game
 {
     class GameManager
     {
+        App app; // Main application reference
         Xform runtimeData;
         Analyser analyser;
         // SpotifyRemoteApp remoteCommunicator;
         Game urhoGame;
 
-        public GameManager(Game game, String trackId)
+        public GameManager(App appref, ref Game game, String trackId)
         {
+            this.app = appref; // Getting main application reference
             this.urhoGame = game; // this.game points to Game object created in Main.xaml.cs
             this.analyser = new Analyser(); // Generating analyser object
             if (!analyser.setupXform(ref runtimeData, trackId)) // Check if runtime data exist for spesified track
@@ -35,6 +37,11 @@ namespace Nonstop.Forms.Game
                 }
             }
             this.urhoGame.setXform(runtimeData);
+        }
+
+        // public void end(Result gameresult);
+        public void end(){
+            app.launchResultView();
         }
     }
 }

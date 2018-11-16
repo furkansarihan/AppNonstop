@@ -1,16 +1,59 @@
-﻿using System;
+﻿using Nonstop.Forms.Game;
+using System;
+using Urho;
+using Urho.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
 {
-    public partial class App : Application
+    public partial class App : Xamarin.Forms.Application
     {
+        MainPage mainPageObject;
+        UrhoSurface urhoSurface;
+        Game urhoGame;
+        GameManager gameManager;
+
         public App()
         {
             InitializeComponent();
-            MainPage = new MainPage();
+            mainPageObject = new MainPage(this); // send reference of App object
+            MainPage = mainPageObject;
+            setupGame();
+            launchGame("06AKEBrKUckW0KREUWRnvT");
+        }
+
+        public void setupGame()
+        {
+            //**************UrhoSurface implementation************
+            urhoSurface = new UrhoSurface();
+            urhoSurface.VerticalOptions = LayoutOptions.FillAndExpand;
+            //**************UrhoSurface implementation************
+
+            contentUpdateGame(); // Update the content with urhosurface
+        }
+
+        public async void launchGame(string track_uri){
+            
+            // launching game with track_uri
+            urhoGame = await urhoSurface.Show<Game>(new ApplicationOptions(assetsFolder: null) { Orientation = ApplicationOptions.OrientationType.Portrait });
+            gameManager = new GameManager(this, ref urhoGame, track_uri); // track_id for test data
+        }
+
+        public void launchResultView(){
+            contentUpdateGame(); // Update the content with resultView
+            
+            // 
+        }
+
+        public void contentUpdateGame(){
+            // Changing context for launching game
+            mainPageObject.Content = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Children = { urhoSurface }
+            };
         }
 
         protected override void OnStart()
