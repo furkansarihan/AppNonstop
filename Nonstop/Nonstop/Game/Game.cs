@@ -10,7 +10,7 @@ using Urho.Gui;
 using Urho.Shapes;
 
 using Nonstop.Forms.Analysis;
-using System.Threading.Tasks;
+using Nonstop.Forms.Game.Utils;
 
 namespace Nonstop.Forms.Game
 {
@@ -23,10 +23,12 @@ namespace Nonstop.Forms.Game
     {
         bool movementsEnabled;
         bool first = true;
+        bool paused = false;
         bool hasXform = false;
         bool hasGameManager = false;
 
         GameManager gameManager;
+        GameResult gameResult;
 
         Scene scene;
         Node plotNode;
@@ -37,6 +39,10 @@ namespace Nonstop.Forms.Game
 
         Octree octree;
         Text timeText;
+        Text durationText;
+        Button pauseButton;
+        Button resumeButton;
+        Button endGameButton;
         List<Piece> pieces;
 
         Xform runtimeData;
@@ -60,7 +66,6 @@ namespace Nonstop.Forms.Game
         protected override void Start()
         {
             base.Start();
-            //waitForXform();
             CreateScene();
             SetupViewport();
         }
@@ -70,7 +75,7 @@ namespace Nonstop.Forms.Game
             Input.SubscribeToTouchEnd(OnTouched);
 
             nonstopTime = new NonstopTime(Urho.Time.SystemTime);
-
+            gameResult = new GameResult();
             scene = new Scene();
             octree = scene.CreateComponent<Octree>();
 
@@ -98,13 +103,8 @@ namespace Nonstop.Forms.Game
             int size = 20;
             baseNode.Scale = new Vector3(size * 1.5f, 1, size * 1.5f);
             pieces = new List<Piece>(size * size);
+            this.createUI(); // Create User Interface
             
-            // UI
-            timeText = new Text();
-            timeText.HorizontalAlignment = HorizontalAlignment.Center;
-            timeText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
-            timeText.SetColor(Color.White);
-            UI.Root.AddChild(timeText);
             Input.SetMouseVisible(true, false);
         }
 
@@ -120,43 +120,125 @@ namespace Nonstop.Forms.Game
 
         protected override void OnUpdate(float timeStep)
         {
-            base.OnUpdate(timeStep);
-            // Update time 
-            nonstopTime.updateTime();
-            // Display time
-            timeText.Value = nonstopTime.getDisplayableTime();
-            // Move Camera
-            cameraNode.SetWorldPosition(new Vector3(0,0,((nonstopTime.currentMillis) / 100)));
-            
-            // Check for section change
-            if (hasXform && runtimeData.data.isSectionChanged(nonstopTime.currentMillis))
+            if (!this.paused) // not paused
             {
-                // Change background
-                vp.SetClearColor(new Color(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f)));
-            }
+                base.OnUpdate(timeStep);
+                // Update time 
+                nonstopTime.updateTime();
+                // Display time
+                timeText.Value = nonstopTime.getDisplayableTime();
+                // Move Camera
+                cameraNode.SetWorldPosition(new Vector3(0, 0, ((nonstopTime.currentMillis) / 100)));
 
-            if(hasXform && first){
-                this.setPieces();
-                this.first = false;
+                // Check for section change
+                if (hasXform && runtimeData.data.isSectionChanged(nonstopTime.currentMillis))
+                {
+                    // Change background
+                    vp.SetClearColor(new Color(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f)));
+                }
+
+                if (hasXform)
+                {
+                    double duration = runtimeData.data.getTrackDuration();
+                    double currmil = nonstopTime.currentMillis;
+                    if (currmil > duration)
+                    {
+                        this.endGame();
+                    }
+                }
+
+                // This is for first launch...
+                if (hasXform && first)
+                {
+                    this.setPieces();
+                    this.first = false;
+                }
             }
+        }
+        public void createUI()
+        {
+            // UI , Text
+            timeText = new Text();
+            timeText.HorizontalAlignment = HorizontalAlignment.Center;
+            timeText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
+            timeText.SetColor(Color.White);
+            
+            // Pause Button
+            pauseButton = new Button();
+            pauseButton.SetColor(new Color(0.2f, 0.2f, 0.7f));
+            pauseButton.SetPosition(20, 20);
+            pauseButton.SetSize(100, 80);
+            pauseButton.SubscribeToReleased(args => {
+                this.inGamePause();
+            });
+
+            Text pauseText = new Text();
+            pauseText.SetColor(Color.White);
+            pauseButton.AddChild(pauseText);
+            pauseText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+            pauseText.Value = "Pause";
+
+            // Resume Button
+            resumeButton = new Button();
+            resumeButton.SetColor(new Color(0.7f, 0.2f, 0.2f));
+            resumeButton.SetPosition(250, 200);
+            resumeButton.SetSize(300, 80); resumeButton.Visible = false;
+            resumeButton.SubscribeToReleased(args => {
+                this.inGameResume();
+            });
+
+            Text resumeText = new Text();
+            resumeButton.AddChild(resumeText);
+            resumeText.SetColor(Color.White);
+            resumeText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+            resumeText.Value = "Resume";
+
+            // End Game Button
+            endGameButton = new Button();
+            endGameButton.SetColor(new Color(0.1f, 0.7f, 0.1f));
+            endGameButton.SetPosition(250, 300);
+            endGameButton.SetSize(100, 100); endGameButton.Visible = false;
+            endGameButton.SubscribeToReleased(args => {
+                this.endGame();
+            });
+
+            Text endGameButtonText = new Text();
+            endGameButtonText.SetColor(Color.White);
+            endGameButton.AddChild(endGameButtonText);
+            endGameButtonText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+            endGameButtonText.Value = "End Game";
+
+            UI.Root.AddChild(resumeButton);
+            UI.Root.AddChild(timeText);
+            UI.Root.AddChild(pauseButton);
         }
         // Game paused outside of class
         // AppRemote or native app invokers will causes this function to run.
-        void inGamePause()
+        public void inGamePause()
         {
+            this.paused = true;
+            nonstopTime.pauseStart(); // Stop Time
 
+            resumeButton.Visible = true;
+            endGameButton.Visible = true;
+            pauseButton.Visible = false;
         }
         // Game will continue to play with start animation
-        void inGameResume()
+        public void inGameResume()
         {
+            endGameButton.Visible = false;
+            resumeButton.Visible = false;
+            pauseButton.Visible = true;
 
+            nonstopTime.pauseEnd();
+            this.paused = false; // continue 
         }
         // this function invokes a function outside of a class
         // and sends game result information to Nonstop
-        void endGame()
+        public void endGame()
         {
             // gameManager.end(Result gameresult);
-            gameManager.end();
+            gameManager.end(this.gameResult);
         }
         
         // This function includes a while loop that
@@ -232,56 +314,5 @@ namespace Nonstop.Forms.Game
         {
             base.OnUpdate(timeStep);
         }*/
-    }
-    public class NonstopTime
-    {
-        uint startTime; // init position of NonstopTime object
-        public uint currentMillis   { get; set; } // for calculate
-        public string currentSecond { get; set; } // for display
-        public string currentMinute { get; set; } // for display
-
-        public NonstopTime(uint start)
-        {
-            this.startTime = start;
-            updateTime();
-        }
-        public void updateTime()
-        {
-            this.currentMillis = Urho.Time.SystemTime - startTime;
-            this.currentSecond = ((this.currentMillis / 1000) % 60).ToString();
-            this.currentMinute = (this.currentMillis / 60000).ToString();
-        }
-        public string getDisplayableTime()
-        {
-            return this.currentMinute + ":" + this.currentSecond;
-        }
-        public void refreshTime(uint newMillis)
-        {
-
-        }
-    }
-    public static class RandomHelper
-    {
-        static readonly Random random = new Random();
-
-        /// <summary>
-        /// Return a random float between 0.0 (inclusive) and 1.0 (exclusive.)
-        /// </summary>
-        public static float NextRandom() { return (float)random.NextDouble(); }
-
-        /// <summary>
-        /// Return a random float between 0.0 and range, inclusive from both ends.
-        /// </summary>
-        public static float NextRandom(float range) { return (float)random.NextDouble() * range; }
-
-        /// <summary>
-        /// Return a random float between min and max, inclusive from both ends.
-        /// </summary>
-        public static float NextRandom(float min, float max) { return (float)((random.NextDouble() * (max - min)) + min); }
-
-        /// <summary>
-        /// Return a random integer between min and max - 1.
-        /// </summary>
-        public static int NextRandom(int min, int max) { return random.Next(min, max); }
     }
 }

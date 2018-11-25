@@ -59,7 +59,6 @@ namespace Nonstop
             // listener for custom cell view...
             var myListView = (ListView)sender;
             var track = (Spotify.Track) myListView.SelectedItem;
-            app.contentUpdateGame();
             app.launchGame(track.id);
         }
 
