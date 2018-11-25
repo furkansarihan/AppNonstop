@@ -89,6 +89,8 @@ namespace Nonstop.Forms.Game
             camera = cameraNode.CreateComponent<Camera>();
             cameraNode.Position = new Vector3(0, 0, 0);
 
+            this.createReferences();
+
             /*Node table = cameraNode.CreateChild();
             var obj = table.CreateComponent<Box>();
             table.AddComponent(obj);*/
@@ -195,8 +197,8 @@ namespace Nonstop.Forms.Game
 
             // End Game Button
             endGameButton = new Button();
-            endGameButton.SetColor(new Color(0.1f, 0.7f, 0.1f));
-            endGameButton.SetPosition(250, 300);
+            endGameButton.SetColor(new Color(0.1f, 0.7f, 0.2f));
+            endGameButton.SetPosition(250, 600);
             endGameButton.SetSize(100, 100); endGameButton.Visible = false;
             endGameButton.SubscribeToReleased(args => {
                 this.endGame();
@@ -209,8 +211,38 @@ namespace Nonstop.Forms.Game
             endGameButtonText.Value = "End Game";
 
             UI.Root.AddChild(resumeButton);
-            UI.Root.AddChild(timeText);
             UI.Root.AddChild(pauseButton);
+            UI.Root.AddChild(endGameButton);
+            UI.Root.AddChild(timeText);
+        }
+
+        public void createReferences()
+        {
+            var boxNode1 = this.cameraNode.CreateChild();
+            boxNode1.Position = new Vector3(-(float)(Graphics.Width / 10) * 5 / (float) Graphics.Width, -0.2f, 3);
+            boxNode1.SetScale(0.2f);
+            boxNode1.SetWorldRotation(new Quaternion(0, 0, 45));
+            Piece box1 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
+            boxNode1.AddComponent(box1);
+
+            var boxNode2 = this.cameraNode.CreateChild();
+            boxNode2.Position = new Vector3(-(float)(Graphics.Width / 10) * 2 / (float)Graphics.Width, -0.4f, 3);
+            boxNode2.SetScale(0.2f);
+            Piece box2 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
+            boxNode2.AddComponent(box2);
+
+            var boxNode3 = this.cameraNode.CreateChild();
+            boxNode3.Position = new Vector3((float)(Graphics.Width / 10) * 2 / (float)Graphics.Width, -0.4f, 3);
+            boxNode3.SetScale(0.2f);
+            Piece box3 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
+            boxNode3.AddComponent(box3);
+
+            var boxNode4 = this.cameraNode.CreateChild();
+            boxNode4.Position = new Vector3((float)(Graphics.Width / 10) * 5 / (float)Graphics.Width, -0.2f, 3);
+            boxNode4.SetScale(0.2f);
+            boxNode4.SetWorldRotation(new Quaternion(0, 0, -45));
+            Piece box4 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
+            boxNode4.AddComponent(box4);
         }
         // Game paused outside of class
         // AppRemote or native app invokers will causes this function to run.
@@ -235,10 +267,13 @@ namespace Nonstop.Forms.Game
         }
         // this function invokes a function outside of a class
         // and sends game result information to Nonstop
-        public void endGame()
+        public async void endGame()
         {
             // gameManager.end(Result gameresult);
-            gameManager.end(this.gameResult);
+            if (hasGameManager)
+            {
+                gameManager.end(this.gameResult);
+            }
         }
         
         // This function includes a while loop that
