@@ -8,7 +8,7 @@
         <ListView x:Name="lst" ItemTapped="trackClickListener">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding name}" Detail="{Binding id}" ></TextCell>
+                    <TextCell Text="{Binding id}" Detail="{Binding id}" ></TextCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

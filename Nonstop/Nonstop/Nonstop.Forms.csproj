@@ -12,7 +12,13 @@
   <ItemGroup>
     <Compile Remove="AppRemote\SpotifyAndroidCommunicator.cs" />
     <Compile Remove="Game\NonstopTime.cs" />
+    <Compile Remove="Pages\Page.xaml.cs" />
+    <Compile Remove="Pages\PageController.cs" />
     <Compile Remove="UrhoApp.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Pages\Page.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -76,5 +82,20 @@
 
   <ItemGroup>
     <Folder Include="Analysis\Runtime\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\TrackListPage.xaml.cs">
+      <DependentUpon>TrackListPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Pages\TrackPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\TrackListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

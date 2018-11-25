@@ -1,5 +1,6 @@
 ﻿using Nonstop.Forms.Game;
 using System;
+using System.Collections.Generic;
 using Urho;
 using Urho.Forms;
 using Xamarin.Forms;
@@ -19,7 +20,7 @@ namespace Nonstop
         {
             InitializeComponent();
             mainPageObject = new MainPage(this); // send reference of App object
-            MainPage = mainPageObject;
+            MainPage = new NavigationPage(mainPageObject); // mainPage added navigationpage stack 
             setupGame();
         }
 
