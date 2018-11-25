@@ -2,13 +2,25 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Nonstop"
+             xmlns:pages="clr-namespace:Nonstop.Forms.Pages"
              x:Class="Nonstop.MainPage">
 
     <StackLayout>
         <ListView x:Name="lst" ItemTapped="trackClickListener">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding id}" Detail="{Binding id}" ></TextCell>
+                    <ViewCell  x:Name="ListCell">
+                        <StackLayout  Orientation="Vertical">
+                            <StackLayout  Orientation="Horizontal" BackgroundColor="Gray">
+                                <Image Aspect="AspectFit" Source="https://i.scdn.co/image/1a9dab25976c706fffccb6bf2cf8a6f5eadd0d29"></Image>
+                                <Label Text="{Binding id}"
+                                       VerticalOptions="CenterAndExpand"
+                                       FontSize="Large"
+                                       TextColor="Black"
+                                       ></Label>
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

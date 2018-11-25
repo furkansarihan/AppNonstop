@@ -28,8 +28,8 @@ namespace Nonstop.Forms.Pages
         private async void Button_Clicked(object sender, EventArgs e)
         {
 
-            app.contentUpdateGame();
-            await Navigation.PopToRootAsync(); // go back mainpage from TracsPage for Urho Content
+            
+            //await Navigation.PopToRootAsync(); // go back mainpage from TracsPage for Urho Content
             app.launchGame(track.id);
 
         }
