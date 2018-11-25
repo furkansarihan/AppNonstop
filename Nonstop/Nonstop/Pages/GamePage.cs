@@ -33,12 +33,11 @@ namespace Nonstop.Forms.Pages
 
             this.launchGame();
         }
-        //protected override async void OnAppearing()
-        //{
-        public async void launchGame() { 
-            base.OnAppearing();
+
+        public async void launchGame() {
             urhoGame = await urhoSurface.Show<Nonstop.Forms.Game.Game>(new ApplicationOptions(assetsFolder: null) { Orientation = ApplicationOptions.OrientationType.Portrait });
             gameManager = new GameManager(this.app, ref urhoGame, this.track_uri); // track_id for test data
         }
+        
     }
 }

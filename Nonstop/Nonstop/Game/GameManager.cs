@@ -37,12 +37,13 @@ namespace Nonstop.Forms.Game
                 }
             }
             this.urhoGame.setXform(runtimeData);
+            this.urhoGame.setGameManager(this);
         }
 
         // public void end(Result gameresult);
-        public void end(Nonstop.Forms.Game.GameResult result)
+        public async void end(Nonstop.Forms.Game.GameResult result)
         {
-            // app.launchResultPage(result);
+            app.launchResultPage(result);
         }
     }
 }
