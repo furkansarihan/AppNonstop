@@ -12,6 +12,7 @@ using Urho;
 using Urho.Forms;
 
 using Nonstop.Forms.Game;
+using Nonstop.Forms.Pages;
 
 namespace Nonstop
 {
@@ -37,6 +38,7 @@ namespace Nonstop
                 //System.Console.WriteLine(json);
                 t = JsonConvert.DeserializeObject<Track>(json);
             }
+            lst.RowHeight = 300;
 
             Spotify.Album a = new Spotify.Album(); //create an album for testing
             a.artists = null;

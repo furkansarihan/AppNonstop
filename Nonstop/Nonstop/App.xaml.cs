@@ -13,15 +13,13 @@ namespace Nonstop
     public partial class App : Xamarin.Forms.Application
     {
         MainPage mainPageObject;
-        NavigationPage navigationPage;
         GamePage gamePage;
 
         public App()
         {
             InitializeComponent();
             mainPageObject = new MainPage(this); // send reference of App object
-            navigationPage = new NavigationPage(mainPageObject);
-            MainPage = navigationPage;
+            MainPage = new NavigationPage(mainPageObject);
         }
         public async void launchGame(string track_uri) {
             // launching game with track_uri
