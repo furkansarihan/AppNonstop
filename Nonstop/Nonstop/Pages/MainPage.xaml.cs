@@ -23,12 +23,12 @@ namespace Nonstop
         {
             InitializeComponent();
             this.app = appref; // getting app reference
+            
 
             //**************json serializer***********************
             var assembly = typeof(MainPage).GetTypeInfo().Assembly;
             Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Spotify.track.json");
-
-            List<Spotify.Track> list = new List<Spotify.Track>();
+            List<TrackList> albumList = new List<TrackList>();
             Track t;
             
             using (var reader = new System.IO.StreamReader(stream))
@@ -38,10 +38,17 @@ namespace Nonstop
                 t = JsonConvert.DeserializeObject<Track>(json);
             }
 
-            for (int i = 0; i < 100; i++)
-                list.Add(t);
+            Spotify.Album a = new Spotify.Album(); //create an album for testing
+            a.artists = null;
+            a.id = "deneme album";
 
-            lst.ItemsSource = list;
+            a.tracks = new Track[10]; // initialize the track list of the album
+
+            for (int i = 0; i < 10; i++)
+                a.tracks[i] = t;
+
+            albumList.Add(a);
+            lst.ItemsSource = albumList; // add albums to listView
 
             //**************json serializer***********************
 
@@ -54,13 +61,21 @@ namespace Nonstop
             
         }
         
-        public void trackClickListener(object sender, ItemTappedEventArgs e)
-        { 
-            // listener for custom cell view...
+        public async void trackClickListener(object sender, ItemTappedEventArgs e)
+        {
             var myListView = (ListView)sender;
-            var track = (Spotify.Track) myListView.SelectedItem;
-            app.launchGame(track.id);
+            if (myListView.SelectedItem is Album) {
+                //open tracsPage
+                // listener for custom cell view...
+                var selectedAlbum = (Album)myListView.SelectedItem;
+                await Navigation.PushAsync(new Forms.Pages.TrackListPage(app, selectedAlbum)); //open tracksPage(add it navigation stack) and send it app ref and selected Album
+            }
+            else if(myListView.SelectedItem is Track)
+            {
+                //openTracPage
+                var selectedTrack = (Track)myListView.SelectedItem;
+                await Navigation.PushAsync(new Forms.Pages.TrackPage(app, selectedTrack));
+            }
         }
-
     }
 }

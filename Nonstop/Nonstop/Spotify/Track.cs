@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Nonstop.Spotify
 {
-    class Track
+    public class Track
     {
         [JsonProperty("id")]
         public string id { get; set; }

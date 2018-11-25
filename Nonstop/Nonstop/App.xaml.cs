@@ -1,6 +1,7 @@
 ﻿using Nonstop.Forms.Game;
 using Nonstop.Forms.Pages;
 using System;
+using System.Collections.Generic;
 using Urho;
 using Urho.Forms;
 using Xamarin.Forms;
