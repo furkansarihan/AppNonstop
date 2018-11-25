@@ -1,4 +1,5 @@
 ﻿using Nonstop.Forms.Game;
+using Nonstop.Forms.Pages;
 using System;
 using System.Collections.Generic;
 using Urho;
@@ -12,41 +13,22 @@ namespace Nonstop
     public partial class App : Xamarin.Forms.Application
     {
         MainPage mainPageObject;
-        UrhoSurface urhoSurface;
-        Game urhoGame;
-        GameManager gameManager;
-
+        
         public App()
         {
             InitializeComponent();
             mainPageObject = new MainPage(this); // send reference of App object
-            MainPage = new NavigationPage(mainPageObject); // mainPage added navigationpage stack 
-            setupGame();
+            MainPage = mainPageObject;
         }
-
-        public void setupGame()
-        {
-            //**************UrhoSurface implementation************
-            urhoSurface = new UrhoSurface();
-            urhoSurface.VerticalOptions = LayoutOptions.FillAndExpand;
-            //**************UrhoSurface implementation************
-        }
-
-        public async void launchGame(string track_uri){
+        public async void launchGame(string track_uri) {
             // launching game with track_uri
-            urhoGame = await urhoSurface.Show<Game>(new ApplicationOptions(assetsFolder: null) { Orientation = ApplicationOptions.OrientationType.Portrait });
-            gameManager = new GameManager(this, ref urhoGame, track_uri); // track_id for test data
-        }
-        
-        public void contentUpdateGame(){
-            // Changing context for launching game
-            mainPageObject.Content = new StackLayout
-            {
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { urhoSurface }
-            };
+            MainPage = new GamePage(this, track_uri);
         }
 
+        public void launchResultPage(Nonstop.Forms.Game.GameResult result)
+        {
+            // mainPageObject.launchResultPage(result);
+        }
         protected override void OnStart()
         {
             // Handle when your app starts
@@ -57,6 +39,8 @@ namespace Nonstop
         protected override void OnSleep()
         {
             // Handle when your app sleeps
+            // Control in game thing...
+            // urhoGame.inGamePause();
         }
 
         protected override void OnResume()

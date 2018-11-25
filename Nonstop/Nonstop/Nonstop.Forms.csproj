@@ -11,10 +11,6 @@
 
   <ItemGroup>
     <Compile Remove="AppRemote\SpotifyAndroidCommunicator.cs" />
-    <Compile Remove="Game\NonstopTime.cs" />
-    <Compile Remove="Pages\Page.xaml.cs" />
-    <Compile Remove="Pages\PageController.cs" />
-    <Compile Remove="UrhoApp.cs" />
   </ItemGroup>
 
   <ItemGroup>

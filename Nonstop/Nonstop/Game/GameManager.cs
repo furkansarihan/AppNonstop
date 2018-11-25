@@ -40,8 +40,9 @@ namespace Nonstop.Forms.Game
         }
 
         // public void end(Result gameresult);
-        public void end(){
-            //app.launchResultView();
+        public void end(Nonstop.Forms.Game.GameResult result)
+        {
+            // app.launchResultPage(result);
         }
     }
 }

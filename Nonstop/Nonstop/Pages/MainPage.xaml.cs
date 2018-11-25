@@ -75,7 +75,6 @@ namespace Nonstop
                 //openTracPage
                 var selectedTrack = (Track)myListView.SelectedItem;
                 await Navigation.PushAsync(new Forms.Pages.TrackPage(app, selectedTrack));
-
             }
         }
     }
