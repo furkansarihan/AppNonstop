@@ -35,7 +35,7 @@ namespace Nonstop.Forms.Pages
         }
 
         public async void launchGame() {
-            urhoGame = await urhoSurface.Show<Nonstop.Forms.Game.Game>(new ApplicationOptions(assetsFolder: null) { Orientation = ApplicationOptions.OrientationType.Portrait });
+            urhoGame = await urhoSurface.Show<Nonstop.Forms.Game.Game>(new ApplicationOptions("Data"));
             gameManager = new GameManager(this.app, ref urhoGame, this.track_uri); // track_id for test data
         }
         

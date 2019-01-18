@@ -49,9 +49,13 @@ namespace Nonstop.Forms.Game
         NonstopTime nonstopTime;
         
         public IEnumerable<Piece> Bars => pieces;
+        float gameSpeed = 1.5f;
 
         [Preserve]
-        public Game(ApplicationOptions options = null) : base(options) { }
+        public Game() : base(new ApplicationOptions(assetsFolder: "Data") { Orientation = ApplicationOptions.OrientationType.Portrait }) { }
+
+        [Preserve]
+        public Game(ApplicationOptions opts) : base(opts) { }
 
         static Game()
         {
@@ -87,9 +91,10 @@ namespace Nonstop.Forms.Game
             // Camera
             cameraNode = scene.CreateChild();
             camera = cameraNode.CreateComponent<Camera>();
+            camera.FarClip = 30.0f;
             cameraNode.Position = new Vector3(0, 0, 0);
 
-            this.createReferences();
+            
 
             /*Node table = cameraNode.CreateChild();
             var obj = table.CreateComponent<Box>();
@@ -100,13 +105,25 @@ namespace Nonstop.Forms.Game
             var light = lightNode.CreateComponent<Light>();
             light.LightType = LightType.Directional;
             light.Range = 50;
-            light.Brightness = 3f;
+            light.Brightness = 1f;
+
+            // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving the
+            // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
+            // generate the necessary 3D texture coordinates for cube mapping
+            
+            /*Node skyNode = scene.CreateChild("Sky");
+            skyNode.SetScale(500.0f); // The scale actually does not matter
+            Skybox skybox = skyNode.CreateComponent<Skybox>();
+            var a = ResourceCache.GetResourceFileName("Models/Non.mdl");
+            skybox.Model = ResourceCache.GetModel("Models/Non.mdl");
+            skybox.SetMaterial(ResourceCache.GetMaterial("Materials/Skybox.xml"));*/
 
             int size = 20;
             baseNode.Scale = new Vector3(size * 1.5f, 1, size * 1.5f);
             pieces = new List<Piece>(size * size);
             this.createUI(); // Create User Interface
-            
+            //this.createReferences(); // Clickable references
+
             Input.SetMouseVisible(true, false);
         }
 
@@ -130,7 +147,7 @@ namespace Nonstop.Forms.Game
                 // Display time
                 timeText.Value = nonstopTime.getDisplayableTime();
                 // Move Camera
-                cameraNode.SetWorldPosition(new Vector3(0, 0, ((nonstopTime.currentMillis) / 100)));
+                cameraNode.SetWorldPosition(new Vector3(0, 0, ((nonstopTime.currentMillis) / 100) * gameSpeed));
 
                 // Check for section change
                 if (hasXform && runtimeData.data.isSectionChanged(nonstopTime.currentMillis))
@@ -161,15 +178,17 @@ namespace Nonstop.Forms.Game
         {
             // UI , Text
             timeText = new Text();
+            timeText.SetPosition(250, 20);
             timeText.HorizontalAlignment = HorizontalAlignment.Center;
             timeText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
             timeText.SetColor(Color.White);
             
             // Pause Button
             pauseButton = new Button();
-            pauseButton.SetColor(new Color(0.2f, 0.2f, 0.7f));
+            //pauseButton.SetColor(new Color(0.2f, 0.2f, 0.7f));
+            pauseButton.Texture = ResourceCache.GetTexture2D("UI/pause_button.png");
             pauseButton.SetPosition(20, 20);
-            pauseButton.SetSize(100, 80);
+            pauseButton.SetSize(128, 128);
             pauseButton.SubscribeToReleased(args => {
                 this.inGamePause();
             });
@@ -303,19 +322,34 @@ namespace Nonstop.Forms.Game
         }
         async void setPieces()
         {
-            foreach (Beat b in runtimeData.data.beats)
+            
+            /*foreach (Beat b in runtimeData.data.beats)
             {
                 var boxNode = plotNode.CreateChild();
-                boxNode.Position = new Vector3(0, -2, b.getStartMillis() / 100);
+                boxNode.Position = new Vector3(0, 2, b.getStartMillis() / 100);
                 Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
                 boxNode.AddComponent(box);
-            }
-            foreach (Segment s in runtimeData.data.segments)
+            }*/
+
+            // NEW BEATS
+            var seg = new Segment();
+            foreach (Beat b in runtimeData.data.beats)
             {
-                if (s.getIndex() != -1)
+                foreach (var s in runtimeData.data.segments)
+                {
+                    seg = s;
+
+                    var beat = b.getStartMillis() / 100;
+                    var segm = s.getStartMillis() / 100;
+                    if (beat <= segm)
+                    {
+                        break;
+                    }
+                }
+                if ( seg.millis > 0)
                 {
                     var boxNode = plotNode.CreateChild();
-                    boxNode.Position = new Vector3((s.getIndex() - 6) / 2, 2, s.getStartMillis() / 100);
+                    boxNode.Position = new Vector3((float)((seg.getIndex() - 2) * 0.5), -1, (seg.getStartMillis() / 100 ) * gameSpeed);
                     Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
                     boxNode.AddComponent(box);
                 }
@@ -326,7 +360,7 @@ namespace Nonstop.Forms.Game
     public class Piece : Component
     {
         Node itself;
-        Box box;
+        StaticModel model;
         Color color;
         float speed;
 
@@ -339,10 +373,12 @@ namespace Nonstop.Forms.Game
         public override void OnAttachedToNode(Node node)
         {
             itself = node.CreateChild();
-            itself.Scale = new Vector3(1, 1, 1); //means zero height
-            this.box = itself.CreateComponent<Box>();
-            this.box.Color = color;
-
+            itself.Scale = new Vector3(0.8f, 0.8f, 0.8f); //means zero height
+            model = node.CreateComponent<StaticModel>();
+            model.Model = Application.ResourceCache.GetModel("Models/Non.mdl");
+            model.SetMaterial(Application.ResourceCache.GetMaterial("Materials/Non.xml"));
+            model.CastShadows = true;
+            
             base.OnAttachedToNode(node);
         }
         /*protected override void OnUpdate(float timeStep)

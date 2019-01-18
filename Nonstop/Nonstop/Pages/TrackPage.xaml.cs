@@ -15,8 +15,7 @@ namespace Nonstop.Forms.Pages
 	{
         App app;
         Track track;
-
-
+        
         public TrackPage (App appref,Track selectedTrack)
 		{
 			InitializeComponent ();

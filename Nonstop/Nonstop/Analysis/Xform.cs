@@ -14,16 +14,55 @@ namespace Nonstop.Forms.Analysis
     class Xform
     {
         public All data;
-        public Xform(Stream stream)
+        public XData xdata;
+
+        public Xform(Stream stream1, Stream stream2)
         {
             // Reads trackId.json from path and fills itself
-            using (var reader = new System.IO.StreamReader(stream))
+            using (var reader = new System.IO.StreamReader(stream1))
             {
                 var json = reader.ReadToEnd();
                 this.data = JsonConvert.DeserializeObject<All>(json);
             }
+
+            // Reading clasified data
+            using (var reader = new System.IO.StreamReader(stream2))
+            {
+                var json = reader.ReadToEnd();
+                this.xdata = JsonConvert.DeserializeObject<XData>(json);
+            }
+
+            fillSectionIndexes();
+            setSegmentMillis();
+        }
+
+        public void fillSectionIndexes()
+        {
+            for (int i = 0; i < data.segments.Length; i++)
+            {
+                data.segments[i].index = xdata.xdatas[i].index;
+            }
+        }
+        public void setSegmentMillis()
+        {
+            for (int i = 0; i < data.segments.Length - 1; i++)
+            {
+                data.segments[i].millis = data.segments[i + 1].getStartMillis() - data.segments[i].getStartMillis();
+            }
         }
     }
+
+    class XData
+    {
+        [JsonProperty("xdatas")]
+        public X[] xdatas { get; set; }
+    }
+    class X
+    {
+        [JsonProperty("index")]
+        public int index { get; set; }
+    }
+
     class All
     {
         int currentSection = 0;
@@ -75,9 +114,12 @@ namespace Nonstop.Forms.Analysis
     class Segment
     {
         [JsonProperty("start")]
-        private double start { get; set; }
+        public double start { get; set; }
         [JsonProperty("pitches")]
         public double[] pitches { get; set; }
+
+        public int index { get; set; }
+        public uint millis { get; set; }
 
         public uint getStartMillis()
         {
@@ -85,7 +127,7 @@ namespace Nonstop.Forms.Analysis
         }
         public int getIndex()
         {
-            int biggestI = -1;
+            /*int biggestI = -1;
             double biggestN = 0.99;
 
             for (int i = 0; i < pitches.Length; i++)
@@ -97,7 +139,9 @@ namespace Nonstop.Forms.Analysis
                 }
             }
 
-            return biggestI;
+            return biggestI;*/
+
+            return index;
         }
     }
     class Section

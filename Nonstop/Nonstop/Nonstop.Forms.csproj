@@ -10,6 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Assets\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="AppRemote\SpotifyAndroidCommunicator.cs" />
   </ItemGroup>
 
@@ -18,28 +27,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Analysis\Response\06AKEBrKUckW0KREUWRnvT.json" />
     <None Remove="Analysis\Response\1NeLwFETswx8Fzxl2AFl91.json" />
-    <None Remove="Analysis\Response\202bGlDuPMWCc3cWQsI6Q7.json" />
-    <None Remove="Analysis\Response\2LD2gT7gwAurzdQDQtILds.json" />
-    <None Remove="Analysis\Response\2nnXe7n3Vivs7OfQKRsfWD.json" />
-    <None Remove="Analysis\Response\33SQy03HsXMtxLPWtXned4.json" />
-    <None Remove="Analysis\Response\36YCdzT57us0LhDmCYtrNE.json" />
-    <None Remove="Analysis\Response\3ZOEytgrvLwQaqXreDs2Jx.json" />
-    <None Remove="Analysis\Response\4kJWtxDDNb9oAk3h7sX3N4.json" />
-    <None Remove="Analysis\Response\5cF0dROlMOK5uNZtivgu50.json" />
-    <None Remove="Analysis\Response\6Iqh2GxyKTInrAG2ymvAwp.json" />
-    <None Remove="Analysis\Response\6r7FXNO57mlZCBY6PXcZZT.json" />
-    <None Remove="Game\Assets\Non.mdl" />
-    <None Remove="track.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Analysis\Response\1NeLwFETswx8Fzxl2AFl91.json" />
+    <None Remove="Analysis\Response\1NeLwFETswx8Fzxl2AFl91_xdata.json" />
+    <None Remove="Analysis\Response\2LD2gT7gwAurzdQDQtILds_xdata.json" />
+    <None Remove="Analysis\Response\4kJWtxDDNb9oAk3h7sX3N4_xdata.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Response\06AKEBrKUckW0KREUWRnvT.json" />
+    <EmbeddedResource Include="Analysis\Response\1NeLwFETswx8Fzxl2AFl91.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Analysis\Response\4kJWtxDDNb9oAk3h7sX3N4_xdata.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Analysis\Response\2LD2gT7gwAurzdQDQtILds_xdata.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Analysis\Response\1NeLwFETswx8Fzxl2AFl91_xdata.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Analysis\Response\202bGlDuPMWCc3cWQsI6Q7.json" />
     <EmbeddedResource Include="Analysis\Response\2LD2gT7gwAurzdQDQtILds.json" />
     <EmbeddedResource Include="Analysis\Response\2nnXe7n3Vivs7OfQKRsfWD.json" />
@@ -50,14 +57,14 @@
     <EmbeddedResource Include="Analysis\Response\5cF0dROlMOK5uNZtivgu50.json" />
     <EmbeddedResource Include="Analysis\Response\6Iqh2GxyKTInrAG2ymvAwp.json" />
     <EmbeddedResource Include="Analysis\Response\6r7FXNO57mlZCBY6PXcZZT.json" />
-    <EmbeddedResource Include="Game\Assets\Non.mdl">
+    <EmbeddedResource Include="Spotify\track.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Game\Assets\SFProText-Bold.ttf" />
-    <EmbeddedResource Include="Spotify\track.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CarouselView.FormsPlugin" Version="5.2.0" />
+    <PackageReference Include="LiveXAML" Version="2.1.59" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="UrhoSharp.Forms" Version="1.8.93" />
     <PackageReference Include="Xam.Plugin.DeviceMotion" Version="1.1.2" />

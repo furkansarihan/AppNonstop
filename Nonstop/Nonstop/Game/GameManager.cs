@@ -8,7 +8,7 @@ namespace Nonstop.Forms.Game
 {
     class GameManager
     {
-        App app; // Main application reference
+        public App app; // Main application reference
         Xform runtimeData;
         Analyser analyser;
         // SpotifyRemoteApp remoteCommunicator;

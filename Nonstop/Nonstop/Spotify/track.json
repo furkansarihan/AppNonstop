@@ -7,10 +7,10 @@
           "spotify": "https://open.spotify.com/artist/4tZwfgrHOc3mvqYlEYSvVi"
         },
         "href": "https://api.spotify.com/v1/artists/4tZwfgrHOc3mvqYlEYSvVi",
-        "id": "4tZwfgrHOc3mvqYlEYSvVi",
+        "id": "4kJWtxDDNb9oAk3h7sX3N4",
         "name": "Daft Punk",
         "type": "artist",
-        "uri": "spotify:artist:4tZwfgrHOc3mvqYlEYSvVi"
+        "uri": "spotify:artist:4kJWtxDDNb9oAk3h7sX3N4"
       }
     ],
     "available_markets": [
@@ -224,7 +224,7 @@
     "spotify": "https://open.spotify.com/track/1NeLwFETswx8Fzxl2AFl91"
   },
   "href": "https://api.spotify.com/v1/tracks/1NeLwFETswx8Fzxl2AFl91",
-  "id": "1NeLwFETswx8Fzxl2AFl91",
+  "id": "2LD2gT7gwAurzdQDQtILds",
   "is_local": false,
   "name": "Something About Us",
   "popularity": 70,

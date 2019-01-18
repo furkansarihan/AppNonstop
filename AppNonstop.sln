@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nonstop.Android", "Nonstop\Nonstop.Android\Nonstop.Android.csproj", "{7853AE87-8B9A-4958-A76B-9898AA75C405}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nonstop.Droid", "Nonstop\Nonstop.Android\Nonstop.Droid.csproj", "{7853AE87-8B9A-4958-A76B-9898AA75C405}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nonstop.iOS", "Nonstop\Nonstop.iOS\Nonstop.iOS.csproj", "{11CFEA30-A9F6-4948-921A-2128A21A3B8B}"
 EndProject

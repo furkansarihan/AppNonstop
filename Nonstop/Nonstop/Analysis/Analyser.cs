@@ -58,14 +58,16 @@ namespace Nonstop.Forms.Analysis
             var assembly = typeof(MainPage).GetTypeInfo().Assembly;
             // This check process now not work due to write to process file thing
             //Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Runtime." + trackId + ".json");
-            Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + ".json");
-            
-            if(stream == null)
+            Stream stream1 = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + ".json");
+
+            Stream stream2 = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + "_xdata.json");
+
+            if (stream1 == null || stream2 == null)
             {
                return false; // Track data not here
             }
 
-            runtimeData = new Xform(stream);
+            runtimeData = new Xform(stream1, stream2);
             return true;
         }
     }

@@ -1,0 +1,8 @@
+<technique vs="Non" ps="Non">
+    <pass name="prepass" psdefines="PREPASS" vsdefines="PREPASS" />
+    <pass name="deferred" psdefines="DEFERREDPASS" vsdefines="DEFERREDPASS" />
+    <pass name="shadow" psdefines="SHADOWPASS" vsdefines="SHADOWPASS" />
+    <pass name="litbase" psdefines="LIGHTBASEPASS" vsdefines="LIGHTBASEPASS"  />
+    <pass name="light" depthtest="equal" depthwrite="false" blend="add" psdefines="LIGHTPASS" vsdefines="LIGHTPASS"  />
+    <pass name="base" psdefines="BASEPASS" vsdefines="BASEPASS"  />
+</technique>

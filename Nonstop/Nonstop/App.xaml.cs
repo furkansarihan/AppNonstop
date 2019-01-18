@@ -6,19 +6,22 @@ using Urho;
 using Urho.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Nonstop.Forms;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
 {
     public partial class App : Xamarin.Forms.Application
     {
-        MainPage mainPageObject;
+        //public MainPage mainPageObject;
+        public CarPage mainPageObject;
         GamePage gamePage;
+        NavigationPage navigationPage;
 
         public App()
         {
             InitializeComponent();
-            mainPageObject = new MainPage(this); // send reference of App object
+            mainPageObject = new CarPage(this); // send reference of App object
             MainPage = new NavigationPage(mainPageObject);
         }
         public async void launchGame(string track_uri) {
@@ -30,7 +33,7 @@ namespace Nonstop
         public async void launchResultPage(Nonstop.Forms.Game.GameResult result)
         {
             // mainPageObject.launchResultPage(result);
-            mainPageObject = new MainPage(this); // send reference of App object
+            mainPageObject = new CarPage(this); // send reference of App object
             navigationPage = new NavigationPage(mainPageObject);
             MainPage = navigationPage;
         }

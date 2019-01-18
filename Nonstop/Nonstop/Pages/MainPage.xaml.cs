@@ -25,7 +25,6 @@ namespace Nonstop
             InitializeComponent();
             this.app = appref; // getting app reference
             
-
             //**************json serializer***********************
             var assembly = typeof(MainPage).GetTypeInfo().Assembly;
             Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Spotify.track.json");
