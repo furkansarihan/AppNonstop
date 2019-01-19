@@ -17,6 +17,5 @@ namespace Nonstop.Spotify
         public Album album { get; set; }
         [JsonProperty("artists")]
         public Artist[] artists { get; set; }
-
     }
 }

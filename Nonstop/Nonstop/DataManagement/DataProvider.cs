@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Nonstop.Forms.Spotify.DatabaseObjects;
 using Nonstop.Spotify;
 using Nonstop.Spotify.DatabaseObjects;
 
@@ -30,9 +31,9 @@ namespace Nonstop.Forms.DataManagement
             // return
             return await app.databaseManager.getAllPlaylists();
         }
-        public async Task<List<Track>> getAllTracks()
+        public async Task<List<Track_db>> getTracks(String uri)
         {
-            return await app.databaseManager.getAllTracks();
+            return await app.databaseManager.getAllTracks(uri);
         }
     }
 }

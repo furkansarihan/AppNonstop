@@ -8,6 +8,8 @@ using Nonstop;
 using Nonstop.Forms.ViewModels;
 using Xamarin.Forms;
 using Nonstop.Spotify;
+using Nonstop.Spotify.DatabaseObjects;
+using Nonstop.Forms.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms
 {
@@ -19,7 +21,7 @@ namespace Nonstop.Forms
         public Wrapper Wrapper { get; set; }
         App app; // Application reference
 
-        public TracksPage(App appref, String uri, TrackList playlist)
+        public TracksPage(App appref, String uri)
         {
             InitializeComponent();
             app = appref;
@@ -29,10 +31,8 @@ namespace Nonstop.Forms
                 Items = new List<CarouselItem>()
             };
 
-            addTrackToCard(playlist.tracks[0]);
-
-            this.BindingContext = Wrapper;
-
+            addTrackToCard(app.dataProvider.getTracks(uri).Result);
+            
             // Create out a list of background colors based on our items colors so we can do a gradient on scroll.
             for (int i = 0; i < Wrapper.Items.Count; i++)
             {
@@ -129,30 +129,33 @@ namespace Nonstop.Forms
         private void itemTapped(object sender, EventArgs e)
         {
             CarouselTracklistlItem selectedCorouselItem = (CarouselTracklistlItem)Wrapper.Items[_currentIndex];
-            Track selectedTrack = selectedCorouselItem.track;
+            Track_db selectedTrack = selectedCorouselItem.track;
             app.launchGame(selectedTrack.id);
-
         }
 
-        private void addTrackToCard(Track track)
+        private void addTrackToCard(List<Track_db> tracks)
         {
             if (Wrapper.Items == null)
             {
                 Wrapper.Items = new List<CarouselItem>();
             }
+            foreach (var t in tracks)
+            {
+                CarouselTracklistlItem card = new CarouselTracklistlItem();
+                card.Title = t.name;
+                card.Name = t.name;
+                card.ImageSrc = "orange.png";
+                card.track = t;
 
-            CarouselTracklistlItem card = new CarouselTracklistlItem();
-            card.Title = track.name;
-            card.Name = track.name;
-            card.ImageSrc = "orange.png";
-            card.track = track;
+                card.Position = 0;
+                card.BackgroundColor = Color.FromHex("#9866d5");
+                card.StartColor = Color.FromHex("#f3463f");
+                card.EndColor = Color.FromHex("#fece49");
 
-            card.Position = 0;
-            card.BackgroundColor = Color.FromHex("#9866d5");
-            card.StartColor = Color.FromHex("#f3463f");
-            card.EndColor = Color.FromHex("#fece49");
+                Wrapper.Items.Add(card);
+            }
 
-            Wrapper.Items.Add(card);
+            this.BindingContext = Wrapper;
         }
     }
 }

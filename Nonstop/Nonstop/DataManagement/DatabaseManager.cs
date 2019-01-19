@@ -6,6 +6,8 @@ using System;
 using Nonstop.Spotify;
 using Nonstop.Spotify.DatabaseObjects;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using Nonstop.Forms.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms.DataManagement
 {
@@ -18,15 +20,37 @@ namespace Nonstop.Forms.DataManagement
         public DatabaseManager()
         {
             sqliteconnection = DependencyService.Get<ISQLite>().GetConnection();
+
+            insertData();
+        }
+        public void setupDatabase()
+        {
             sqliteconnection.CreateTableAsync<TrackList_db>();
+            sqliteconnection.CreateTableAsync<Track_db>();
+        }
+        async void insertData()
+        {
+            List<TrackList_db> li = await sqliteconnection.QueryAsync<TrackList_db>("select * from TrackList_db");
 
             // insert data
             TrackList_db t = new TrackList_db();
-            t.id = "idididid";
-            t.name = "name name";
+            t.id = "playlist1";
+            t.name = "playplay";
 
-            sqliteconnection.InsertAsync(t);
-            //sqliteconnection.UpdateAsync(t);
+            Track_db t1 = new Track_db();
+            t1.id = "track1";
+            t1.name = "Nonstop1";
+            t1.tracklistid = "playlist1";
+
+            Track_db t2 = new Track_db();
+            t2.id = "track2";
+            t2.name = "Nonstop2";
+            t2.tracklistid = "playlist1";
+
+            sqliteconnection.InsertAsync(t1);
+            sqliteconnection.InsertAsync(t2);
+
+            Debug.WriteLine("asdfasdf");
         }
         public void setAppReference(App appref)
         {
@@ -38,18 +62,11 @@ namespace Nonstop.Forms.DataManagement
             // but in this method we just query all
             // playlists on the playlist table
             // ...
-            var query = sqliteconnection.Table<TrackList_db>().Where(t => t.name.StartsWith("t"));
-            
-
-            var result = await query.ToListAsync();
-
-            return result;
-
-            //return await sqliteconnection.ExecuteScalarAsync<List<TrackList>>("select * from [TrackList]");
+            return await sqliteconnection.QueryAsync<TrackList_db>("select * from TrackList_db");
         }
-        public async Task<List<Track>> getAllTracks()
+        public async Task<List<Track_db>> getAllTracks(String uri)
         {
-            return await sqliteconnection.ExecuteScalarAsync<List<Track>>("select * from Track");
+            return await sqliteconnection.QueryAsync<Track_db>("select * from Track_db where tracklistid=?", uri);
         }
     }
 }

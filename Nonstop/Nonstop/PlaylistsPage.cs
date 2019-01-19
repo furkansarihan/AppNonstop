@@ -11,6 +11,7 @@ using Nonstop.Spotify;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
+using Nonstop.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms
 {
@@ -55,12 +56,9 @@ namespace Nonstop.Forms
 
             p1.tracks[0] = t;
             p.tracks[0] = t;
-
-            addPlayListToCard(p);
-            addPlayListToCard(p1);
-            //-----------------
-            this.BindingContext = Wrapper;
-
+            
+            addTrackListsToCards(app.dataProvider.getAllPLaylists().Result);
+            
             // Create out a list of background colors based on our items colors so we can do a gradient on scroll.
             for (int i = 0; i < Wrapper.Items.Count; i++)
             {
@@ -156,31 +154,32 @@ namespace Nonstop.Forms
         private void itemTapped(object sender, EventArgs e)
         {
             CarouselPlaylistlItem selectedCorouselItem = (CarouselPlaylistlItem)Wrapper.Items[_currentIndex];
-            TrackList selectedPlaylist = selectedCorouselItem.playlist;
-            Navigation.PushAsync(new TracksPage(app, "",selectedPlaylist));
-
+            TrackList_db selectedPlaylist = selectedCorouselItem.playlist;
+            Navigation.PushAsync(new TracksPage(app, selectedPlaylist.id));
         }
 
-        private void addPlayListToCard(Playlist playlist)
+        private void addTrackListsToCards(List<TrackList_db> tracklist)
         {
             if (Wrapper.Items == null)
             {
                 Wrapper.Items = new List<CarouselItem>();
             }
+            foreach (var t in tracklist)
+            {
+                CarouselPlaylistlItem card = new CarouselPlaylistlItem();
+                card.Title = t.name;
+                card.Name = t.name;
+                card.ImageSrc = "orange.png";
 
-            CarouselPlaylistlItem card = new CarouselPlaylistlItem();
-            card.Title = playlist.name;
-            card.Name = playlist.name;
-            card.ImageSrc = "orange.png";
-            card.playlist = playlist;  
+                card.Position = 0;
+                card.BackgroundColor = Color.FromHex("#9866d5");
+                card.StartColor = Color.FromHex("#f3463f");
+                card.EndColor = Color.FromHex("#fece49");
 
+                Wrapper.Items.Add(card);
+            }
             
-            card.Position = 0;
-            card.BackgroundColor = Color.FromHex("#9866d5");
-            card.StartColor = Color.FromHex("#f3463f");
-            card.EndColor = Color.FromHex("#fece49");
-
-            Wrapper.Items.Add(card);
+            this.BindingContext = Wrapper;
         }
         
     }

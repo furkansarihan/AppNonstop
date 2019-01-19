@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 using Nonstop.Spotify;
+using Nonstop.Spotify.DatabaseObjects;
+using Nonstop.Forms.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms.ViewModels
 {
@@ -42,12 +44,11 @@ namespace Nonstop.Forms.ViewModels
 
     public class CarouselPlaylistlItem : CarouselItem, INotifyPropertyChanged
     {
-        public TrackList playlist { get; set; }
-
+        public TrackList_db playlist { get; set; }
     }
     public class CarouselTracklistlItem : CarouselItem, INotifyPropertyChanged
     {
         public string artistName { get; set; }
-        public Track track { get; set; }
+        public Track_db track { get; set; }
     }
 }
