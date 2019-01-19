@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Nonstop.Spotify
 {
-    class Playlist : TrackList
+    public class Playlist : TrackList
     {
         [JsonProperty("owner")]
         private User owner { get; set; }

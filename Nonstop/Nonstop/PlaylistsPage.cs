@@ -7,10 +7,14 @@ using CarouselView.FormsPlugin.Abstractions;
 using Nonstop;
 using Nonstop.Forms.ViewModels;
 using Xamarin.Forms;
+using Nonstop.Spotify;
+using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Nonstop.Forms
 {
-    public partial class CarPage : ContentPage
+    public partial class PlaylistsPage : ContentPage
     {
         private int _currentIndex;
         private List<Color> _backgroundColors = new List<Color>();
@@ -18,21 +22,43 @@ namespace Nonstop.Forms
         public Wrapper Wrapper { get; set; }
         App app; // Application reference
 
-        public CarPage(App appref)
+        public PlaylistsPage(App appref)
         {
             InitializeComponent();
+            app = appref;
 
             Wrapper = new Wrapper
             {
-                Items = new List<CarouselItem>() 
-                {
-                    // Just create some dummy data here for now.
-                    new CarouselItem{ Position=0, Type="JUICY AND ORANGE", ImageSrc="oranges.png", Name = "ORANGE AWESOMENESS", Price = 120, Title = "ORANGE AWESOMENESS", BackgroundColor= Color.FromHex("#9866d5"), StartColor=Color.FromHex("#f3463f"),  EndColor=Color.FromHex("#fece49")},
-                    new CarouselItem{ Position=0, Type="NOT A TYPICAL FRUIT", ImageSrc="tomato.png", Name = "TERRIBLE TOMATO", Price = 129, Title = "TERRIBLE TOMATO", BackgroundColor= Color.FromHex("#fab62a"), StartColor=Color.FromHex("#42a7ff"),  EndColor=Color.FromHex("#fab62a")},
-                    new CarouselItem{ Position=0, Type="SWEET AND GREEN", ImageSrc="pear.png", Name = "PEAR PARTY", Price = 140, Title = "PEAR PARTY", BackgroundColor= Color.FromHex("#425cfc"), StartColor=Color.FromHex("#33ccf3"),  EndColor=Color.FromHex("#ccee44")}
-                }
+                Items = new List<CarouselItem>()
             };
 
+
+            //getplaylists function will be there
+            Playlist p = new Playlist();
+            p.name = "deneme";
+            Playlist p1 = new Playlist();
+            p1.name = "deneme2";
+            p1.tracks = new Track[1];
+            p.tracks = new Track[1];
+            
+            var assembly = typeof(MainPage).GetTypeInfo().Assembly;
+            Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Spotify.track.json");
+            List<TrackList> albumList = new List<TrackList>();
+            Track t = new Track();
+
+            using (var reader = new System.IO.StreamReader(stream))
+            {
+                var json = reader.ReadToEnd();
+                //System.Console.WriteLine(json);
+                t = JsonConvert.DeserializeObject<Track>(json);
+            }
+
+            p1.tracks[0] = t;
+            p.tracks[0] = t;
+
+            addPlayListToCard(p);
+            addPlayListToCard(p1);
+            //-----------------
             this.BindingContext = Wrapper;
 
             // Create out a list of background colors based on our items colors so we can do a gradient on scroll.
@@ -46,8 +72,8 @@ namespace Nonstop.Forms
                 else
                     _backgroundColors.Add(current.BackgroundColor);
             }
+            
         }
-
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -127,5 +153,35 @@ namespace Nonstop.Forms
 
             return colorList;
         }
+        private void itemTapped(object sender, EventArgs e)
+        {
+            CarouselPlaylistlItem selectedCorouselItem = (CarouselPlaylistlItem)Wrapper.Items[_currentIndex];
+            TrackList selectedPlaylist = selectedCorouselItem.playlist;
+            Navigation.PushAsync(new TracksPage(app, "",selectedPlaylist));
+
+        }
+
+        private void addPlayListToCard(Playlist playlist)
+        {
+            if (Wrapper.Items == null)
+            {
+                Wrapper.Items = new List<CarouselItem>();
+            }
+
+            CarouselPlaylistlItem card = new CarouselPlaylistlItem();
+            card.Title = playlist.name;
+            card.Name = playlist.name;
+            card.ImageSrc = "orange.png";
+            card.playlist = playlist;  
+
+            
+            card.Position = 0;
+            card.BackgroundColor = Color.FromHex("#9866d5");
+            card.StartColor = Color.FromHex("#f3463f");
+            card.EndColor = Color.FromHex("#fece49");
+
+            Wrapper.Items.Add(card);
+        }
+        
     }
 }

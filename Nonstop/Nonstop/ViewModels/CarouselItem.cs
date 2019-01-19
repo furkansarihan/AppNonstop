@@ -2,13 +2,13 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
+using Nonstop.Spotify;
 
 namespace Nonstop.Forms.ViewModels
 {
     public class CarouselItem : INotifyPropertyChanged
     {
         public string Title { get; set; }
-        public int Price { get; set; }
         public string Name { get; set; }
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
@@ -38,5 +38,16 @@ namespace Nonstop.Forms.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public class CarouselPlaylistlItem : CarouselItem, INotifyPropertyChanged
+    {
+        public TrackList playlist { get; set; }
+
+    }
+    public class CarouselTracklistlItem : CarouselItem, INotifyPropertyChanged
+    {
+        public string artistName { get; set; }
+        public Track track { get; set; }
     }
 }

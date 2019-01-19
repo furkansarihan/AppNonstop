@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:Nonstop.Forms" x:Class="Nonstop.Forms.TracksPage" xmlns:custom="clr-namespace:Nonstop.Forms.Controls" xmlns:controls="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions">
+    <Grid x:Name="page">
+        <controls:CarouselViewControl x:Name="carousel" PositionSelected="Handle_PositionSelected" Scrolled="Handle_Scrolled" Orientation="Horizontal" ShowIndicators="true" IndicatorsTintColor="#CCFFFFFF" CurrentPageIndicatorTintColor="#FFFFFF" IndicatorsShape="Square" InterPageSpacing="0" ItemsSource="{Binding Items}"
+            VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <controls:CarouselViewControl.ItemTemplate>
+                <DataTemplate x:Name="datatemplate">
+                    <Grid Padding="32,64,32,64">
+                        <custom:RoundedContentView CornerRadius="32" BackgroundColor="#FFFFFF">
+                            <StackLayout>
+                                <StackLayout VerticalOptions="Fill" HorizontalOptions="Fill">
+                                    <custom:RoundedContentView VerticalOptions="FillAndExpand" HeightRequest="400" CornerRadius="32" HasBackgroundGradient="true" GradientStartColor="{Binding StartColor}" GradientEndColor="{Binding EndColor}" >
+                                        <Grid>
+                                            <StackLayout>
+                                                <Label FontFamily="{StaticResource font_bold}" TranslationX="{Binding Position}" Text="{Binding Name}" TextColor="#FFFFFF" Margin="24,24,24,0" FontSize="16" FontAttributes="Bold" LineBreakMode="NoWrap" />
+                                                <Label FontFamily="{StaticResource font_regular}" TranslationX="{Binding Position}" Text="{Binding Description}" TextColor="#FFFFFF" Margin="24,8,24,24" FontSize="12" LineBreakMode="WordWrap" />
+                                            </StackLayout>
+                                        </Grid>
+                                    </custom:RoundedContentView>
+                                </StackLayout>
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="itemTapped"/>
+                                </StackLayout.GestureRecognizers>
+                            </StackLayout>
+                        </custom:RoundedContentView>
+                    </Grid>
+                </DataTemplate>
+            </controls:CarouselViewControl.ItemTemplate>
+        </controls:CarouselViewControl>
+    </Grid>
+</ContentPage>

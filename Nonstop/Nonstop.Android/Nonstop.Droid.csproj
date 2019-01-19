@@ -61,6 +61,9 @@
     <PackageReference Include="LiveXAML">
       <Version>2.1.59</Version>
     </PackageReference>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.5.231</Version>
+    </PackageReference>
     <PackageReference Include="UrhoSharp">
       <Version>1.8.93</Version>
     </PackageReference>
@@ -72,6 +75,7 @@
     <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="27.0.2.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementations\AndroidSQLite .cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Renderers\RoundedContentViewRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -85,6 +89,7 @@
     <AndroidAsset Include="Assets\Montserrat-ExtraBold.ttf" />
     <AndroidAsset Include="Assets\Montserrat-Bold.ttf" />
     <AndroidAsset Include="Assets\Montserrat-Regular.ttf" />
+    <AndroidAsset Include="Assets\Nonstop.db" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml">
