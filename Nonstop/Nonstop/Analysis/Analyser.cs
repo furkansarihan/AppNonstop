@@ -27,7 +27,7 @@ namespace Nonstop.Forms.Analysis
             // Getting analyzer data from api.spotify request
             // Creating runtime data from api.spotify response json............
             // Writing data to path -> trackId.json
-            var assembly = typeof(MainPage).GetTypeInfo().Assembly;
+            var assembly = typeof(TrackListsPage).GetTypeInfo().Assembly;
             Stream strea = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + ".json");
 
             using (var reader = new System.IO.StreamReader(strea))
@@ -55,7 +55,7 @@ namespace Nonstop.Forms.Analysis
         {
             // Control path for existing generated runtime data
             // return false if do not exist
-            var assembly = typeof(MainPage).GetTypeInfo().Assembly;
+            var assembly = typeof(TrackListsPage).GetTypeInfo().Assembly;
             // This check process now not work due to write to process file thing
             //Stream stream = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Runtime." + trackId + ".json");
             Stream stream1 = assembly.GetManifestResourceStream("Nonstop.Forms.Analysis.Response." + trackId + ".json");

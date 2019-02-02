@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
 using Nonstop.Forms.DataManagement;
 using Nonstop.Forms.Network;
+using Nonstop.Forms.AppRemote;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
@@ -22,6 +23,7 @@ namespace Nonstop
         public DatabaseManager databaseManager;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
+        public SpotifyManager spotifyManager;
 
         public App()
         {
@@ -34,29 +36,38 @@ namespace Nonstop
             databaseManager.setAppReference(this);
             dataProvider.setAppReference(this);
             networkManager.setAppReference(this);
-
-            x();
-
-            launchPlaylistsPage();
+            
+            
         }
-
-        public async void x()
+        public void initApplication()
         {
-            List<Nonstop.Spotify.DatabaseObjects.TrackList_db> l = await dataProvider.getAllPLaylists();
-
-            var a = l;
+            bool connection = databaseManager.getSpotifyConnection().Result;
+            if (connection)
+            {
+                launchPlaylistsPage();
+            }
+            else
+            {
+                //
+            }
         }
-        public async void launchPlaylistsPage()
+        public void launchPlaylistsPage()
         {
-            mainPageObject = new Forms.PlaylistsPage(this); // send reference of App object
+            mainPageObject = new Forms.TrackListsPage(this); // send reference of App object
             MainPage = new NavigationPage(mainPageObject);
         }
-        public async void launchGame(string track_uri) {
+
+        public void launchGame(string track_uri)
+        {
             // launching game with track_uri
             gamePage = new GamePage(this, track_uri);
             MainPage = gamePage;
         }
 
+        public void launchSpotifyConnectPage()
+        {
+            MainPage = new SpotifyDownloadPage(this);
+        }
         public async void launchResultPage(Nonstop.Forms.Game.GameResult result)
         {
             // mainPageObject.launchResultPage(result);

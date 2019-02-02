@@ -62,21 +62,21 @@ namespace Nonstop
             
         }
         
-        public async void trackClickListener(object sender, ItemTappedEventArgs e)
+        /*public async void trackClickListener(object sender, ItemTappedEventArgs e)
         {
             var myListView = (ListView)sender;
             if (myListView.SelectedItem is Album) {
                 //open tracsPage
                 // listener for custom cell view...
                 var selectedAlbum = (Album)myListView.SelectedItem;
-                await Navigation.PushAsync(new Forms.Pages.TrackListPage(app, selectedAlbum)); //open tracksPage(add it navigation stack) and send it app ref and selected Album
+                await Navigation.PushAsync(new Forms.Pages.TrackListsPage(app, selectedAlbum)); //open tracksPage(add it navigation stack) and send it app ref and selected Album
             }
             else if(myListView.SelectedItem is Track)
             {
                 //openTracPage
                 var selectedTrack = (Track)myListView.SelectedItem;
-                await Navigation.PushAsync(new Forms.Pages.TrackPage(app, selectedTrack));
+                await Navigation.PushAsync(new Forms.Pages.TracksPage(app, selectedTrack));
             }
-        }
+        }*/
     }
 }

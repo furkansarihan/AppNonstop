@@ -1,0 +1,32 @@
+﻿<metadata>
+  <attr path="/api/package[@name='com.spotify.protocol.types']
+              /class[@name='Message']
+              /field[@name='message']"
+      name="managedName">_message</attr>
+
+  <attr path="/api/package[@name='com.spotify.protocol.types']
+              /class[@name='Repeat']
+              /field[@name='repeat']"
+      name="managedName">_repeat</attr>
+
+  <attr path="/api/package[@name='com.spotify.protocol.types']
+              /class[@name='PlaybackSpeed']
+              /field[@name='playbackSpeed']"
+      name="managedName">_playbackSpeed</attr>
+
+  <attr path="/api/package[@name='com.spotify.protocol.types']
+              /class[@name='Shuffle']
+              /field[@name='shuffle']"
+      name="managedName">_shuffle</attr>
+
+  <attr path="/api/package[@name='com.spotify.protocol.types']
+              /class[@name='Uri']
+              /field[@name='uri']"
+      name="managedName">uri</attr>
+
+  <attr path="/api/package[@name='com.spotify.protocol.types']
+              /class[@name='Uris']
+              /field[@name='uris']"
+      name="managedName">_uris</attr>
+
+</metadata>

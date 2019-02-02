@@ -29,11 +29,16 @@ namespace Nonstop.Forms.DataManagement
 
             // if no internet get form local database
             // return
-            return await app.databaseManager.getAllPlaylists();
+            return app.databaseManager.getAllPlaylists().Result;
         }
         public async Task<List<Track_db>> getTracks(String uri)
         {
-            return await app.databaseManager.getAllTracks(uri);
+            return app.databaseManager.getTracks(uri).Result;
+        }
+
+        public bool getSpotifyConnection()
+        {
+            return app.databaseManager.getSpotifyConnection().Result;
         }
     }
 }

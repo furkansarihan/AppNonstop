@@ -31,19 +31,8 @@ namespace Nonstop.Forms
                 Items = new List<CarouselItem>()
             };
 
-            addTrackToCard(app.dataProvider.getTracks(uri).Result);
-            
-            // Create out a list of background colors based on our items colors so we can do a gradient on scroll.
-            for (int i = 0; i < Wrapper.Items.Count; i++)
-            {
-                var current = Wrapper.Items[i];
-                var next = Wrapper.Items.Count > i + 1 ? Wrapper.Items[i + 1] : null;
-
-                if (next != null)
-                    _backgroundColors.AddRange(SetGradients(current.BackgroundColor, next.BackgroundColor, 100));
-                else
-                    _backgroundColors.Add(current.BackgroundColor);
-            }
+            var tdb = app.dataProvider.getTracks(uri).Result;
+            addTracksToCard(tdb);
         }
 
         protected override void OnAppearing()
@@ -51,7 +40,10 @@ namespace Nonstop.Forms
             base.OnAppearing();
 
             // Need to start somewhere...
-            page.BackgroundColor = _backgroundColors.First();
+            if (_backgroundColors.GetCount() > 0)
+            {
+                page.BackgroundColor = _backgroundColors.First();
+            }
         }
 
         public void Handle_PositionSelected(object sender, PositionSelectedEventArgs e)
@@ -133,7 +125,7 @@ namespace Nonstop.Forms
             app.launchGame(selectedTrack.id);
         }
 
-        private void addTrackToCard(List<Track_db> tracks)
+        private void addTracksToCard(List<Track_db> tracks)
         {
             if (Wrapper.Items == null)
             {
@@ -156,6 +148,18 @@ namespace Nonstop.Forms
             }
 
             this.BindingContext = Wrapper;
+            
+            // Create out a list of background colors based on our items colors so we can do a gradient on scroll.
+            for (int i = 0; i < Wrapper.Items.Count; i++)
+            {
+                var current = Wrapper.Items[i];
+                var next = Wrapper.Items.Count > i + 1 ? Wrapper.Items[i + 1] : null;
+
+                if (next != null)
+                    _backgroundColors.AddRange(SetGradients(current.BackgroundColor, next.BackgroundColor, 100));
+                else
+                    _backgroundColors.Add(current.BackgroundColor);
+            }
         }
     }
 }

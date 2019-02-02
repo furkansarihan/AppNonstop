@@ -20,9 +20,11 @@
 
   <ItemGroup>
     <Compile Remove="AppRemote\SpotifyAndroidCommunicator.cs" />
+    <Compile Remove="Pages\MainPage.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="Pages\MainPage.xaml" />
     <EmbeddedResource Remove="Pages\Page.xaml" />
   </ItemGroup>
 
@@ -85,5 +87,11 @@
 
   <ItemGroup>
     <Folder Include="Analysis\Runtime\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Pages\WelcomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
