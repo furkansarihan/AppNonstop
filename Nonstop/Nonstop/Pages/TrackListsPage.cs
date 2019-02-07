@@ -59,6 +59,7 @@ namespace Nonstop.Forms
 
             if (e.Direction == ScrollDirection.Right)
                 position = (int)((_currentIndex * 100) + e.NewValue);
+            
             else if (e.Direction == ScrollDirection.Left)
                 position = (int)((_currentIndex * 100) - e.NewValue);
 
@@ -136,13 +137,13 @@ namespace Nonstop.Forms
                 CarouselPlaylistlItem card = new CarouselPlaylistlItem();
                 card.Title = t.name;
                 card.Name = t.id;
-                card.ImageSrc = "orange.png";
+                card.ImageSrc = "https://i.scdn.co/image/b6be520fd1dc9feb84100be40f63de4f80694f18";
                 card.playlist = t;
 
                 card.Position = 0;
-                card.BackgroundColor = Color.FromHex("#9866d5");
-                card.StartColor = Color.FromHex("#f3463f");
-                card.EndColor = Color.FromHex("#fece49");
+                card.BackgroundColor = Color.FromHex("#F5F5F5");
+                card.StartColor = Color.FromHex("#7B1FA2");
+                card.EndColor = Color.FromHex("#4A148C");
 
                 Wrapper.Items.Add(card);
             }

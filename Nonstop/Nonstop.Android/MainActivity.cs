@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Android.App;
 using Android.Content.PM;
@@ -6,11 +6,11 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using Com.Spotify.Android.Appremote.Api;
-using Com.Spotify.Android.Appremote.Api.Error;
+//using Com.Spotify.Android.Appremote.Api;
+//using Com.Spotify.Android.Appremote.Api.Error;
 using Java.Lang;
 using Android.Util;
-using Com.Spotify.Sdk.Android.Authentication;
+//using Com.Spotify.Sdk.Android.Authentication;
 using Android.Content;
 using CarouselView.FormsPlugin.Android;
 using Nonstop.Droid.Implementations;
@@ -38,7 +38,20 @@ namespace Nonstop.Droid
             LoadApplication(nonstopForms);
 
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
+            
+            //change status bar color
+            Window.SetStatusBarColor(Android.Graphics.Color.Argb(255, 255, 255, 255));
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
 
+            //===========================virtual keys 
+            int uiOptions = (int)Window.DecorView.SystemUiVisibility;
+            
+            uiOptions |= (int)SystemUiFlags.HideNavigation;
+            uiOptions |= (int)SystemUiFlags.ImmersiveSticky;
+
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)uiOptions;
+            //====================================
+            
             CarouselViewRenderer.Init();
         }
         protected override void OnStart()

@@ -28,7 +28,7 @@ namespace Nonstop
         public App()
         {
             InitializeComponent();
-            
+
             // Generating Objects and setting App references
             databaseManager = new DatabaseManager();
             dataProvider = new DataProvider();
@@ -44,19 +44,22 @@ namespace Nonstop
             /*bool connection = databaseManager.getSpotifyConnection().Result;
             if (connection)
             {
-                launchPlaylistsPage();
+                
             }
             else
             {
                 //
             }*/
-
             launchPlaylistsPage();
         }
         public void launchPlaylistsPage()
         {
             mainPageObject = new Forms.TrackListsPage(this); // send reference of App object
-            MainPage = new NavigationPage(mainPageObject);
+            MainPage= new NavigationPage(mainPageObject);
+            MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
+            MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.FromHex("#000000"));
+            
+
         }
 
         public void launchGame(string track_uri)
