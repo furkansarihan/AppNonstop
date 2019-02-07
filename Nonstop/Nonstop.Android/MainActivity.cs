@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Android.App;
 using Android.Content.PM;
@@ -14,15 +14,18 @@ using Android.Util;
 using Android.Content;
 using CarouselView.FormsPlugin.Android;
 using Nonstop.Droid.Implementations;
+using Plugin.CurrentActivity;
 
 namespace Nonstop.Droid
 {
+    public delegate void ActivityResultEventHandler(int requestCode, Result resultCode, Intent intent);
+
     [Activity(Label = "Nonstop", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        public App nonstopForms; // Xamarin.Forms reference of our app.
-        SpotifyAndroidCommunicator comm; // Spotify communication object
-        
+        public App nonstopForms; // Xamarin.Forms reference of our app
+        public event ActivityResultEventHandler onActivityResult;
+
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -34,6 +37,8 @@ namespace Nonstop.Droid
             nonstopForms = new App(); 
             LoadApplication(nonstopForms);
 
+            CrossCurrentActivity.Current.Init(this, savedInstanceState);
+            
             //change status bar color
             Window.SetStatusBarColor(Android.Graphics.Color.Argb(255, 255, 255, 255));
             Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
@@ -46,33 +51,28 @@ namespace Nonstop.Droid
 
             Window.DecorView.SystemUiVisibility = (StatusBarVisibility)uiOptions;
             //====================================
-
-            comm = new SpotifyAndroidCommunicator(this);
-
+            
             CarouselViewRenderer.Init();
         }
         protected override void OnStart()
         {
             base.OnStart();
-          //  comm.start();
         }
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent intent)
+        protected override void OnActivityResult(int requestCode, Result result, Intent intent)
         {
-            base.OnActivityResult(requestCode, resultCode, intent);
-            comm.onActivityResult(requestCode, resultCode, intent);
+            base.OnActivityResult(requestCode, result, intent);
+            onActivityResult(requestCode, result, intent);
         }
 
         protected override void OnStop()
         {
             base.OnStop();
-            //comm.stop();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            //comm.destroy();
         }
     }
 }
