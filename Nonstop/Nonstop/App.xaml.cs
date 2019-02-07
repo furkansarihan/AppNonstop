@@ -9,7 +9,7 @@ using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
 using Nonstop.Forms.DataManagement;
 using Nonstop.Forms.Network;
-using Nonstop.Forms.AppRemote;
+using Nonstop.Forms.Spotify;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
@@ -23,7 +23,7 @@ namespace Nonstop
         public DatabaseManager databaseManager;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
-        public SpotifyManager spotifyManager;
+        public ISPTGateway spotifyManager;
 
         public App()
         {
@@ -36,12 +36,12 @@ namespace Nonstop
             databaseManager.setAppReference(this);
             dataProvider.setAppReference(this);
             networkManager.setAppReference(this);
-            
-            
+
+            initApplication();
         }
         public void initApplication()
         {
-            bool connection = databaseManager.getSpotifyConnection().Result;
+            /*bool connection = databaseManager.getSpotifyConnection().Result;
             if (connection)
             {
                 launchPlaylistsPage();
@@ -49,7 +49,9 @@ namespace Nonstop
             else
             {
                 //
-            }
+            }*/
+
+            launchPlaylistsPage();
         }
         public void launchPlaylistsPage()
         {

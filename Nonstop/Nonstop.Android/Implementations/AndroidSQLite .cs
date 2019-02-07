@@ -44,10 +44,23 @@ namespace Nonstop.Droid.Implementations
                 }
             }
 
+
             var conn = new SQLiteAsyncConnection(path);
 
             // Return the database connection  
             return conn;
+        }
+
+        public SQLiteConnection getConnection(string path, string db)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var connectionPath = System.IO.Path.Combine(path, db);
+            var connection = new SQLiteConnection(connectionPath);
+            return connection;
         }
 
         void ReadWriteStream(Stream readStream, Stream writeStream)

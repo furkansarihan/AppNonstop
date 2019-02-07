@@ -8,8 +8,6 @@ using Nonstop;
 using Nonstop.Forms.ViewModels;
 using Xamarin.Forms;
 using Nonstop.Spotify;
-using Nonstop.Spotify.DatabaseObjects;
-using Nonstop.Forms.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms
 {
@@ -121,11 +119,11 @@ namespace Nonstop.Forms
         private void itemTapped(object sender, EventArgs e)
         {
             CarouselTracklistlItem selectedCorouselItem = (CarouselTracklistlItem)Wrapper.Items[_currentIndex];
-            Track_db selectedTrack = selectedCorouselItem.track;
+            Track selectedTrack = selectedCorouselItem.track;
             app.launchGame(selectedTrack.id);
         }
 
-        private void addTracksToCard(List<Track_db> tracks)
+        private void addTracksToCard(List<Track> tracks)
         {
             if (Wrapper.Items == null)
             {
