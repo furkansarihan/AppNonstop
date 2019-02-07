@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Nonstop.Spotify
 {
     public class Artist
     {
+        [PrimaryKey]
         [JsonProperty("id")]
         private string id { get; set; }
         [JsonProperty("name")]
