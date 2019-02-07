@@ -6,11 +6,11 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using Com.Spotify.Android.Appremote.Api;
-using Com.Spotify.Android.Appremote.Api.Error;
+//using Com.Spotify.Android.Appremote.Api;
+//using Com.Spotify.Android.Appremote.Api.Error;
 using Java.Lang;
 using Android.Util;
-using Com.Spotify.Sdk.Android.Authentication;
+//using Com.Spotify.Sdk.Android.Authentication;
 using Android.Content;
 using CarouselView.FormsPlugin.Android;
 using Nonstop.Droid.Implementations;
@@ -34,6 +34,19 @@ namespace Nonstop.Droid
             nonstopForms = new App(); 
             LoadApplication(nonstopForms);
 
+            //change status bar color
+            Window.SetStatusBarColor(Android.Graphics.Color.Argb(255, 255, 255, 255));
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+
+            //===========================virtual keys 
+            int uiOptions = (int)Window.DecorView.SystemUiVisibility;
+            
+            uiOptions |= (int)SystemUiFlags.HideNavigation;
+            uiOptions |= (int)SystemUiFlags.ImmersiveSticky;
+
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)uiOptions;
+            //====================================
+
             comm = new SpotifyAndroidCommunicator(this);
 
             CarouselViewRenderer.Init();
@@ -41,7 +54,7 @@ namespace Nonstop.Droid
         protected override void OnStart()
         {
             base.OnStart();
-            comm.start();
+          //  comm.start();
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent intent)
@@ -53,13 +66,13 @@ namespace Nonstop.Droid
         protected override void OnStop()
         {
             base.OnStop();
-            comm.stop();
+            //comm.stop();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            comm.destroy();
+            //comm.destroy();
         }
     }
 }
