@@ -9,8 +9,7 @@ using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
 using Nonstop.Forms.DataManagement;
 using Nonstop.Forms.Network;
-using Nonstop.Forms.AppRemote;
-using Color = Xamarin.Forms.Color;
+using Nonstop.Forms.Spotify;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
@@ -24,7 +23,7 @@ namespace Nonstop
         public DatabaseManager databaseManager;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
-        public SpotifyManager spotifyManager;
+        public ISPTGateway spotifyManager;
 
         public App()
         {

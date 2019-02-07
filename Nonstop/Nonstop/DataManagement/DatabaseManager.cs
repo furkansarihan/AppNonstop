@@ -4,82 +4,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Nonstop.Spotify;
-using Nonstop.Spotify.DatabaseObjects;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Nonstop.Forms.Spotify.DatabaseObjects;
+using PCLStorage;
+using System.IO;
 
 namespace Nonstop.Forms.DataManagement
 {
     public class DatabaseManager
     {
         public App app;
-        static SQLiteAsyncConnection sqliteconnection;
-        public const string DbFileName = "Nonstop.db";
+        static SQLiteConnection _sqLiteConnection;
+        string dbName = "Nonstop.db3";
 
         public DatabaseManager()
         {
-            sqliteconnection = DependencyService.Get<ISQLite>().GetConnection();
+            IFolder localFolder = FileSystem.Current.LocalStorage;
+            string projectDirectory = Path.Combine(localFolder.Path, "debug");
+
+            _sqLiteConnection = DependencyService.Get<ISQLite>().getConnection(projectDirectory, dbName);
+
             setupDatabase();
             insertData();
         }
         public void setupDatabase()
         {
-            sqliteconnection.CreateTableAsync<TrackList_db>();
-            sqliteconnection.CreateTableAsync<Track_db>();
+            _sqLiteConnection.CreateTable<TrackList>();
+            _sqLiteConnection.CreateTable<Track>();
         }
-        async void insertData()
-        {
-            //List<TrackList_db> li = await sqliteconnection.QueryAsync<TrackList_db>("select * from TrackList_db");
-            
+        void insertData()
+        {            
             // insert data
-            TrackList_db t = new TrackList_db();
+            TrackList t = new TrackList();
             t.id = "playlist1";
             t.name = "playplay";
 
-            Track_db t1 = new Track_db();
+            Track t1 = new Track();
             t1.id = "track1";
             t1.name = "Nonstop1";
-            t1.tracklistid = "playlist1";
 
-            Track_db t2 = new Track_db();
+            Track t2 = new Track();
             t2.id = "track2";
             t2.name = "Nonstop2";
-            t2.tracklistid = "playlist1";
 
-            sqliteconnection.InsertAsync(t);
-            sqliteconnection.InsertAsync(t1);
-            sqliteconnection.InsertAsync(t2);
-
-            Debug.WriteLine("asdfasdf");
+            List<TrackList> trackLists = getAllPlaylists();
+            if(trackLists.Count == 0)
+            {
+                _sqLiteConnection.Insert(t);
+                _sqLiteConnection.Insert(t1);
+                _sqLiteConnection.Insert(t2);
+            }
         }
         public void setAppReference(App appref)
         {
             app = appref;
         }
-        public async Task<List<TrackList_db>> getAllPlaylists()
+        public List<TrackList> getAllPlaylists()
         {
             // users id defined in app staticly
             // but in this method we just query all
             // playlists on the playlist table
             // ...
             //return await sqliteconnection.QueryAsync<TrackList_db>("select * from TrackList_db");
-            List<TrackList_db> li = sqliteconnection.QueryAsync<TrackList_db>("select * from TrackList_db").Result;
-            return li;
+            
+            List<TrackList> liste = _sqLiteConnection.Table<TrackList>().ToList();
+
+            return liste;
         }
-        public async Task<bool> getSpotifyConnection()
+        public bool getSpotifyConnection()
         {
             return false;
         }
-        public async Task<List<Track_db>> getTracks(String uri)
+        public List<Track> getTracks(String uri)
         {
             //List<Track_db> li = await sqliteconnection.QueryAsync<Track_db>("select * from Track_db where tracklistid=?", uri);
-            List<Track_db> li = sqliteconnection.QueryAsync<Track_db>("select * from Track_db").Result;
-            List<Track_db> ret = new List<Track_db>();
+            List<Track> li = _sqLiteConnection.Query<Track>("select * from Track");
+            List<Track> ret = new List<Track>();
 
             foreach (var l in li)
             {
-                if (l.tracklistid == uri)
+                if (l.id == uri)
                 {
                     ret.Add(l);
                 }

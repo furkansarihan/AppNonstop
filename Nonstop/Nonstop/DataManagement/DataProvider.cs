@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Nonstop.Forms.Spotify.DatabaseObjects;
 using Nonstop.Spotify;
-using Nonstop.Spotify.DatabaseObjects;
 
 
 namespace Nonstop.Forms.DataManagement
@@ -21,7 +19,7 @@ namespace Nonstop.Forms.DataManagement
         {
             app = appref;
         }
-        public async Task<List<TrackList_db>> getAllPLaylists()
+        public async Task<List<TrackList>> getAllPLaylists()
         {
             // if internet connection here
             // -- refresh getplaylists functions on network ---
@@ -31,7 +29,7 @@ namespace Nonstop.Forms.DataManagement
             // return
             return app.databaseManager.getAllPlaylists().Result;
         }
-        public async Task<List<Track_db>> getTracks(String uri)
+        public async Task<List<Track>> getTracks(String uri)
         {
             return app.databaseManager.getTracks(uri).Result;
         }
