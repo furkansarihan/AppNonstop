@@ -8,14 +8,12 @@ using Nonstop;
 using Nonstop.Forms.ViewModels;
 using Xamarin.Forms;
 using Nonstop.Spotify;
-using System.IO;
-using System.Reflection;
-using Newtonsoft.Json;
 using Nonstop.Spotify.DatabaseObjects;
+using Nonstop.Forms.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms
 {
-    public partial class TrackListsPage : ContentPage
+    public partial class TracksPage : ContentPage
     {
         private int _currentIndex;
         private List<Color> _backgroundColors = new List<Color>();
@@ -23,7 +21,7 @@ namespace Nonstop.Forms
         public Wrapper Wrapper { get; set; }
         App app; // Application reference
 
-        public TrackListsPage(App appref)
+        public TracksPage(App appref, String uri)
         {
             InitializeComponent();
             app = appref;
@@ -33,9 +31,10 @@ namespace Nonstop.Forms
                 Items = new List<CarouselItem>()
             };
 
-            var tldb = app.dataProvider.getAllPLaylists().Result;
-            addTrackListsToCards(tldb);
+            var tdb = app.dataProvider.getTracks(uri).Result;
+            addTracksToCard(tdb);
         }
+
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -118,37 +117,38 @@ namespace Nonstop.Forms
 
             return colorList;
         }
+
         private void itemTapped(object sender, EventArgs e)
         {
-            CarouselPlaylistlItem selectedCorouselItem = (CarouselPlaylistlItem)Wrapper.Items[_currentIndex];
-            TrackList_db selectedPlaylist = selectedCorouselItem.playlist;
-            Navigation.PushAsync(new TracksPage(app, selectedPlaylist.id));
+            CarouselTracklistlItem selectedCorouselItem = (CarouselTracklistlItem)Wrapper.Items[_currentIndex];
+            Track_db selectedTrack = selectedCorouselItem.track;
+            app.launchGame(selectedTrack.id);
         }
 
-        private void addTrackListsToCards(List<TrackList_db> tracklist)
+        private void addTracksToCard(List<Track_db> tracks)
         {
             if (Wrapper.Items == null)
             {
                 Wrapper.Items = new List<CarouselItem>();
             }
-            foreach (var t in tracklist)
+            foreach (var t in tracks)
             {
-                CarouselPlaylistlItem card = new CarouselPlaylistlItem();
+                CarouselTracklistlItem card = new CarouselTracklistlItem();
                 card.Title = t.name;
-                card.Name = t.id;
+                card.Name = t.name;
                 card.ImageSrc = "orange.png";
-                card.playlist = t;
+                card.track = t;
 
                 card.Position = 0;
-                card.BackgroundColor = Color.FromHex("#9866d5");
-                card.StartColor = Color.FromHex("#f3463f");
-                card.EndColor = Color.FromHex("#fece49");
+                card.BackgroundColor = Color.FromHex("#F5F5F5");
+                card.StartColor = Color.FromHex("#7B1FA2");
+                card.EndColor = Color.FromHex("#4A148C");
 
                 Wrapper.Items.Add(card);
             }
-            
-            this.BindingContext = Wrapper;
 
+            this.BindingContext = Wrapper;
+            
             // Create out a list of background colors based on our items colors so we can do a gradient on scroll.
             for (int i = 0; i < Wrapper.Items.Count; i++)
             {
@@ -161,6 +161,5 @@ namespace Nonstop.Forms
                     _backgroundColors.Add(current.BackgroundColor);
             }
         }
-        
     }
 }

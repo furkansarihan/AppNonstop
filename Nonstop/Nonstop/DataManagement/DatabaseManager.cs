@@ -33,7 +33,7 @@ namespace Nonstop.Forms.DataManagement
             //List<TrackList_db> li = await sqliteconnection.QueryAsync<TrackList_db>("select * from TrackList_db");
             
             // insert data
-            /*TrackList_db t = new TrackList_db();
+            TrackList_db t = new TrackList_db();
             t.id = "playlist1";
             t.name = "playplay";
 
@@ -49,7 +49,7 @@ namespace Nonstop.Forms.DataManagement
 
             sqliteconnection.InsertAsync(t);
             sqliteconnection.InsertAsync(t1);
-            sqliteconnection.InsertAsync(t2);*/
+            sqliteconnection.InsertAsync(t2);
 
             Debug.WriteLine("asdfasdf");
         }
