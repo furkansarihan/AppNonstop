@@ -1,12 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Nonstop.Forms.Pages.SpotifyConnectionPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:Nonstop.Forms" x:Class="Nonstop.Forms.Pages.SpotifyConnectionPage" xmlns:custom="clr-namespace:Nonstop.Forms.Controls" xmlns:controls="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions">
+    <Grid x:Name="page">
+        <Label  TranslationX="0" HorizontalOptions="Center" Text="Connecting to spotify..." TextColor="#000000"  FontSize="18" LineBreakMode="NoWrap" />
+    </Grid>
 </ContentPage>
