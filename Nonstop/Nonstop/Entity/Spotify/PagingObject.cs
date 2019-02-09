@@ -10,7 +10,7 @@ namespace Nonstop.Forms.Entity.Spotify
         [JsonProperty("href")]
         private string href { get; set; }
         [JsonProperty("items")]
-        private E[] items { get; set; }
+        public E[] items { get; set; }
         [JsonProperty("limit")]
         private int limit { get; set; }
         [JsonProperty("next")]
