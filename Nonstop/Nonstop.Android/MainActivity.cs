@@ -13,7 +13,6 @@ using Android.Util;
 //using Com.Spotify.Sdk.Android.Authentication;
 using Android.Content;
 using CarouselView.FormsPlugin.Android;
-using Nonstop.Droid.Implementations;
 using Plugin.CurrentActivity;
 
 namespace Nonstop.Droid

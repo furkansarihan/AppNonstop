@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Nonstop.Forms.Entity.Spotify;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,6 @@ namespace Nonstop.Spotify
         public string name { get; set; }
         [SQLite.Ignore]
         [JsonProperty("tracks")]
-        public Track[] tracks { get; set; }
+        public PagingObject<PlaylistTrack> tracks { get; set; }
     }
 }

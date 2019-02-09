@@ -60,7 +60,7 @@ namespace Nonstop.Droid.Spotify
             spotifyAppRemote = appRemote;
             connectionEventHandler(this, new SPTGatewayEventArgs { result = SPTConnectionResult.Success });
 
-            playTrack("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL")
+            playTrack("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
         }
         public void onFailed(Throwable exception)
         {
