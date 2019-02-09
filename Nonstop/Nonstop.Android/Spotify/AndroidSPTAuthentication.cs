@@ -76,6 +76,7 @@ namespace Nonstop.Droid.Spotify
 
         private bool isTokenExpired()
         {
+            if (tokenExpireAt == 0) return true;
             long timestamp = DateTime.Now.Ticks;
             return timestamp <= tokenExpireAt;
         }

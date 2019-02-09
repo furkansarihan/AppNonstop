@@ -12,7 +12,8 @@ namespace Nonstop.Forms.Service
 {
     class SPTBaseService<E> : BaseDispose
     {
-        static Uri BASE_ADDRESS = new Uri("https://api.spotify.com/v1/");
+        private static string BASE_ADDRESS = "https://api.spotify.com/v1/";
+
         public static async Task<E> getAsync(string path, string token)
         {
             // Create a New HttpClient object and dispose it when done, so the app doesn't leak resources
@@ -21,7 +22,8 @@ namespace Nonstop.Forms.Service
                 string responseBody = "";
                 try
                 {
-                    client.BaseAddress = BASE_ADDRESS;
+                    Uri uri = new Uri(BASE_ADDRESS);
+                    client.BaseAddress = uri;
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -45,17 +47,19 @@ namespace Nonstop.Forms.Service
                 string responseBody = "";
                 try
                 {
+                    UriBuilder baseUri = new UriBuilder(BASE_ADDRESS);
+                    client.BaseAddress = baseUri.Uri;
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var query = HttpUtility.ParseQueryString(BASE_ADDRESS.Query);
+                    var query = HttpUtility.ParseQueryString(baseUri.Query);
                     foreach (KeyValuePair<string, string> entry in queries)
                     {
                         query.Add(entry.Key, entry.Value);
                     }
-
-                    Uri uri = new Uri(query.ToString());
+                    baseUri.Query = query.ToString();
+                    Uri uri = new Uri(baseUri.ToString());
                     responseBody = await client.GetStringAsync(uri);
                 }
                 catch (HttpRequestException e)

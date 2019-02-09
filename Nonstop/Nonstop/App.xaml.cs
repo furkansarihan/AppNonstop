@@ -64,7 +64,7 @@ namespace Nonstop
         {
             MainPage = new SpotifyDownloadPage(this);
         }
-        public async void launchResultPage(Nonstop.Forms.Game.GameResult result)
+        public async void launchResultPage(Nonstop.Forms.Game.Utils.GameResult result)
         {
             // mainPageObject.launchResultPage(result);
             //mainPageObject = new CarPage(this); // send reference of App object
