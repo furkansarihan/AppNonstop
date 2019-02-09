@@ -17,5 +17,7 @@ namespace Nonstop.Spotify
         [SQLite.Ignore]
         [JsonProperty("tracks")]
         public PagingObject<PlaylistTrack> tracks { get; set; }
+        [JsonProperty("images")]
+        public Image[] images { get; set; }
     }
 }
