@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:Nonstop.Forms" x:Class="Nonstop.Forms.TrackListsPage" xmlns:custom="clr-namespace:Nonstop.Forms.Controls" xmlns:controls="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions" Title="Nonstop">
+    <Grid x:Name="page">
+
+        <controls:CarouselViewControl x:Name="carousel" PositionSelected="Handle_PositionSelected" Scrolled="Handle_Scrolled" Orientation="Vertical" ShowIndicators="true" IndicatorsTintColor="#FFFFFFF" CurrentPageIndicatorTintColor="#FFFFFF" IndicatorsShape="Square" InterPageSpacing="0" ItemsSource="{Binding Items}"
+            VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <controls:CarouselViewControl.ItemTemplate>
+
+                <DataTemplate x:Name="datatemplate">
+
+                    <Grid Padding="32,64,32,64">
+                        <custom:RoundedContentView CornerRadius="32" BackgroundColor="#FFFFFF">
+                            <StackLayout>
+                                <StackLayout VerticalOptions="Fill" HorizontalOptions="Fill">
+                                    <custom:RoundedContentView VerticalOptions="FillAndExpand" HeightRequest="500" CornerRadius="32" HasBackgroundGradient="true" GradientStartColor="{Binding StartColor}" GradientEndColor="{Binding EndColor}" Focused="itemTapped">
+                                        <Grid>
+
+                                            <StackLayout Padding="0,0,0,0" Margin="0,0,0,0">
+                                                <StackLayout Orientation="Vertical" >
+                                                    <Image  Source="{Binding ImageSrc}" MinimumHeightRequest="500" MinimumWidthRequest="500" Rotation="{Binding Rotation}" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,0,0" />
+                                                    <Image  Source="{Binding ImageSrc}" MinimumHeightRequest="500" MinimumWidthRequest="500" Rotation="{Binding Rotation}" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,0,0" />
+                                                    <Image  Source="{Binding ImageSrc}" MinimumHeightRequest="500" MinimumWidthRequest="500" Rotation="{Binding Rotation}" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,0,0" />
+                                                    <Image  Source="{Binding ImageSrc}" MinimumHeightRequest="500" MinimumWidthRequest="500" Rotation="{Binding Rotation}" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,0,0" />
+                                                </StackLayout>
+
+                                                <Label FontFamily="{StaticResource font_bold}"  Text="{Binding Name}" TextColor="#FFFFFF" Margin="24,24,24,0" FontSize="16" FontAttributes="Bold" LineBreakMode="NoWrap" />
+                                                <Label Text="{Binding Title}" FontFamily="{StaticResource font_extrabold}" HorizontalOptions="Center" TextColor="#55000000" VerticalOptions="End" Margin="0,0,0,0" FontSize="140" FontAttributes="Bold" LineBreakMode="NoWrap" />
+                                            </StackLayout>
+
+                                        </Grid>
+                                    </custom:RoundedContentView>
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="itemTapped" />
+                                    </StackLayout.GestureRecognizers>
+                                </StackLayout>
+                            </StackLayout>
+                        </custom:RoundedContentView>
+                        <!--<Image TranslationX="{Binding Position}" Source="{Binding ImageSrc}" WidthRequest="300" Rotation="{Binding Rotation}" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,-56,152" />
+                    -->
+                    </Grid>
+                </DataTemplate>
+                
+            </controls:CarouselViewControl.ItemTemplate>
+            
+        </controls:CarouselViewControl>
+        
+    </Grid>
+</ContentPage>

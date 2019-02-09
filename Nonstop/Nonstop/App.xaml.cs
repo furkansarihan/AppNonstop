@@ -9,7 +9,7 @@ using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
 using Nonstop.Forms.DataManagement;
 using Nonstop.Forms.Network;
-using Nonstop.Forms.AppRemote;
+using Nonstop.Forms.Spotify;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
@@ -23,12 +23,12 @@ namespace Nonstop
         public DatabaseManager databaseManager;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
-        public SpotifyManager spotifyManager;
+        public ISPTGateway spotifyManager;
 
         public App()
         {
             InitializeComponent();
-            
+
             // Generating Objects and setting App references
             databaseManager = new DatabaseManager();
             dataProvider = new DataProvider();
@@ -36,25 +36,30 @@ namespace Nonstop
             databaseManager.setAppReference(this);
             dataProvider.setAppReference(this);
             networkManager.setAppReference(this);
-            
-            
+
+            initApplication();
         }
         public void initApplication()
         {
-            bool connection = databaseManager.getSpotifyConnection().Result;
+            /*bool connection = databaseManager.getSpotifyConnection().Result;
             if (connection)
             {
-                launchPlaylistsPage();
+                
             }
             else
             {
                 //
-            }
+            }*/
+            launchPlaylistsPage();
         }
         public void launchPlaylistsPage()
         {
             mainPageObject = new Forms.TrackListsPage(this); // send reference of App object
-            MainPage = new NavigationPage(mainPageObject);
+            MainPage= new NavigationPage(mainPageObject);
+            MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
+            MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.FromHex("#000000"));
+            
+
         }
 
         public void launchGame(string track_uri)

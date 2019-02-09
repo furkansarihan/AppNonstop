@@ -8,8 +8,6 @@ using Nonstop;
 using Nonstop.Forms.ViewModels;
 using Xamarin.Forms;
 using Nonstop.Spotify;
-using Nonstop.Spotify.DatabaseObjects;
-using Nonstop.Forms.Spotify.DatabaseObjects;
 
 namespace Nonstop.Forms
 {

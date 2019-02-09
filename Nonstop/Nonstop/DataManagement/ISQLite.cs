@@ -7,6 +7,6 @@ namespace Nonstop.Forms.DataManagement
 {
     public interface ISQLite
     {
-        SQLiteAsyncConnection GetConnection();
+        SQLiteConnection getConnection(string path, string db);
     }
 }
