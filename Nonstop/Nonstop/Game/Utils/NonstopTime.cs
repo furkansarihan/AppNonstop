@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nonstop.Forms.Game
+namespace Nonstop.Forms.Game.Utils
 {
     public class NonstopTime
     {
@@ -38,7 +38,8 @@ namespace Nonstop.Forms.Game
         }
         public void refreshTime(uint newMillis)
         {
-
+            this.startTime = newMillis;
+            updateTime();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Nonstop.Forms.Analysis
      * This class includes playable runtime data and It's specified format 
      * 
      **/
-    class Xform
+    public class Xform
     {
         public All data;
         public XData xdata;
@@ -52,18 +52,18 @@ namespace Nonstop.Forms.Analysis
         }
     }
 
-    class XData
+    public class XData
     {
         [JsonProperty("xdatas")]
         public X[] xdatas { get; set; }
     }
-    class X
+    public class X
     {
         [JsonProperty("index")]
         public int index { get; set; }
     }
 
-    class All
+    public class All
     {
         int currentSection = 0;
 
@@ -97,7 +97,7 @@ namespace Nonstop.Forms.Analysis
             return (uint)(track.duration * (double)1000);
         }
     }
-    class Beat
+    public class Beat
     {
         [JsonProperty("start")]
         private double start { get; set; }
@@ -111,7 +111,7 @@ namespace Nonstop.Forms.Analysis
             return (uint)(start * (double)1000);
         }
     }
-    class Segment
+    public class Segment
     {
         [JsonProperty("start")]
         public double start { get; set; }
@@ -144,7 +144,7 @@ namespace Nonstop.Forms.Analysis
             return index;
         }
     }
-    class Section
+    public class Section
     {
         [JsonProperty("start")]
         private double start { get; set; }
@@ -154,7 +154,7 @@ namespace Nonstop.Forms.Analysis
             return (uint)(start * (double)1000);
         }
     }
-    class Track
+    public class Track
     {
         [JsonProperty("duration")]
         public double duration { get; set; }
