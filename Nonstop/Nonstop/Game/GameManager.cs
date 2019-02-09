@@ -6,7 +6,7 @@ using Nonstop.Forms.Analysis;
 
 namespace Nonstop.Forms.Game
 {
-    class GameManager
+    public class GameManager
     {
         public App app; // Main application reference
         Xform runtimeData;
@@ -41,7 +41,7 @@ namespace Nonstop.Forms.Game
         }
 
         // public void end(Result gameresult);
-        public async void end(Nonstop.Forms.Game.GameResult result)
+        public async void end(Nonstop.Forms.Game.Utils.GameResult result)
         {
             app.launchResultPage(result);
         }

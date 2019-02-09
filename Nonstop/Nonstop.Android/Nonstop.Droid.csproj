@@ -61,8 +61,8 @@
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.5.231</Version>
     </PackageReference>
-    <PackageReference Include="UrhoSharp">
-      <Version>1.8.93</Version>
+    <PackageReference Include="UrhoSharp.Forms">
+      <Version>1.9.67</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="3.1.0.697729" />
     <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2.1" />
@@ -88,6 +88,9 @@
     <AndroidAsset Include="Assets\Montserrat-Bold.ttf" />
     <AndroidAsset Include="Assets\Montserrat-Regular.ttf" />
     <AndroidAsset Include="Assets\Nonstop.db" />
+    <AndroidAsset Include="Assets\Data\Models\Reference.mdl" />
+    <AndroidAsset Include="Assets\Data\Models\CUBEc.mdl" />
+    <AndroidAsset Include="Assets\Data\Models\NEWCUBE.mdl" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml">
@@ -226,6 +229,20 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-mdpi\tomato.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Data\Materials\CUBEc.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <TransformFile Include="Assets\Data\Materials\NEWCUBE.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Data\Textures\Titled.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidAsset>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

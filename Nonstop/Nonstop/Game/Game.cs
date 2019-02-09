@@ -19,7 +19,7 @@ namespace Nonstop.Forms.Game
      * Everything about controlling syncronisation management will make on parent class
      * 
      **/
-    class Game : Urho.Application
+    public class Game : Urho.Application
     {
         bool movementsEnabled;
         bool first = true;
@@ -39,7 +39,8 @@ namespace Nonstop.Forms.Game
 
         Octree octree;
         Text timeText;
-        Text durationText;
+        Text scoreText;
+        Text nodeNumber;
         Button pauseButton;
         Button resumeButton;
         Button endGameButton;
@@ -49,7 +50,11 @@ namespace Nonstop.Forms.Game
         NonstopTime nonstopTime;
         
         public IEnumerable<Piece> Bars => pieces;
-        float gameSpeed = 1.5f;
+        float gameSpeed = 1.0f;
+        float loc = 1.0f;
+
+        int screenHeight = (int)Xamarin.Forms.Device.Info.PixelScreenSize.Height;
+        int screenWidth = (int)Xamarin.Forms.Device.Info.PixelScreenSize.Width;
 
         [Preserve]
         public Game() : base(new ApplicationOptions(assetsFolder: "Data") { Orientation = ApplicationOptions.OrientationType.Portrait }) { }
@@ -93,8 +98,8 @@ namespace Nonstop.Forms.Game
             camera = cameraNode.CreateComponent<Camera>();
             camera.FarClip = 30.0f;
             cameraNode.Position = new Vector3(0, 0, 0);
-
-            
+            //cameraNode.Rotation = new Quaternion(0.0f, 0.0f, 0.0f);
+            cameraNode.Rotate(new Quaternion(15.0f, 0.0f, 0.0f));
 
             /*Node table = cameraNode.CreateChild();
             var obj = table.CreateComponent<Box>();
@@ -133,7 +138,11 @@ namespace Nonstop.Forms.Game
             var results = octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
             if (results != null)
             {
-                var bar = results.Value.Node?.Parent?.GetComponent<Bar>();
+                if (results.Value.Node?.Position.Z - cameraNode.Position.Z < 150)
+                {
+                    results.Value.Node?.Remove();
+                    System.Console.WriteLine("Node tapped.");
+                }
             }
         }
 
@@ -146,17 +155,23 @@ namespace Nonstop.Forms.Game
                 nonstopTime.updateTime();
                 // Display time
                 timeText.Value = nonstopTime.getDisplayableTime();
+                // Display Score
+                scoreText.Value = gameResult.getUIScore();
+                // Number of nodes
+                nodeNumber.Value = plotNode.GetNumChildren().ToString();
                 // Move Camera
-                cameraNode.SetWorldPosition(new Vector3(0, 0, ((nonstopTime.currentMillis) / 100) * gameSpeed));
+                cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (((nonstopTime.currentMillis) / 100.0f) * gameSpeed) - 1.0f));
 
+                //cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (loc * gameSpeed) - 1.0f));
+                //loc += 0.3f;
                 // Check for section change
-                if (hasXform && runtimeData.data.isSectionChanged(nonstopTime.currentMillis))
+                /*if (hasXform && runtimeData.data.isSectionChanged(nonstopTime.currentMillis))
                 {
                     // Change background
                     vp.SetClearColor(new Color(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f)));
-                }
+                }*/
 
-                if (hasXform)
+                /*if (hasXform)
                 {
                     double duration = runtimeData.data.getTrackDuration();
                     double currmil = nonstopTime.currentMillis;
@@ -164,13 +179,14 @@ namespace Nonstop.Forms.Game
                     {
                         this.endGame();
                     }
-                }
+                }*/
 
                 // This is for first launch...
                 if (hasXform && first)
                 {
                     this.setPieces();
                     this.first = false;
+                    nonstopTime.refreshTime(Urho.Time.SystemTime);
                 }
             }
         }
@@ -178,11 +194,28 @@ namespace Nonstop.Forms.Game
         {
             // UI , Text
             timeText = new Text();
-            timeText.SetPosition(250, 20);
-            timeText.HorizontalAlignment = HorizontalAlignment.Center;
+            timeText.SetPosition(0, 0);
+            timeText.HorizontalAlignment = HorizontalAlignment.Right;
+            timeText.VerticalAlignment = VerticalAlignment.Bottom;
             timeText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
             timeText.SetColor(Color.White);
-            
+
+            // Score text
+            scoreText = new Text();
+            scoreText.SetPosition(0, 0);
+            scoreText.HorizontalAlignment = HorizontalAlignment.Right;
+            scoreText.VerticalAlignment = VerticalAlignment.Top;
+            scoreText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
+            scoreText.SetColor(Color.White);
+
+            // Number of nodes displayed here
+            nodeNumber = new Text();
+            nodeNumber.SetPosition(0, 0);
+            nodeNumber.HorizontalAlignment = HorizontalAlignment.Left;
+            nodeNumber.VerticalAlignment = VerticalAlignment.Bottom;
+            nodeNumber.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
+            nodeNumber.SetColor(Color.White);
+
             // Pause Button
             pauseButton = new Button();
             //pauseButton.SetColor(new Color(0.2f, 0.2f, 0.7f));
@@ -202,7 +235,9 @@ namespace Nonstop.Forms.Game
             // Resume Button
             resumeButton = new Button();
             resumeButton.SetColor(new Color(0.7f, 0.2f, 0.2f));
-            resumeButton.SetPosition(250, 200);
+            resumeButton.SetPosition(0, -(screenHeight / 4));
+            resumeButton.HorizontalAlignment = HorizontalAlignment.Center;
+            resumeButton.VerticalAlignment = VerticalAlignment.Center;
             resumeButton.SetSize(300, 80); resumeButton.Visible = false;
             resumeButton.SubscribeToReleased(args => {
                 this.inGameResume();
@@ -233,18 +268,27 @@ namespace Nonstop.Forms.Game
             UI.Root.AddChild(pauseButton);
             UI.Root.AddChild(endGameButton);
             UI.Root.AddChild(timeText);
+            UI.Root.AddChild(scoreText);
+            UI.Root.AddChild(nodeNumber);
         }
 
         public void createReferences()
         {
             var boxNode1 = this.cameraNode.CreateChild();
+            boxNode1.Position = new Vector3(0, 0, 0);
+            boxNode1.Scale = new Vector3(0.8f, 0.8f, 0.8f);
+            boxNode1.SetWorldRotation(new Quaternion(0, 0, 0));
+            Piece box1 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f), gameResult, cameraNode , "Reference");
+            boxNode1.AddComponent(box1);
+
+            /*var boxNode1 = this.cameraNode.CreateChild();
             boxNode1.Position = new Vector3(-(float)(Graphics.Width / 10) * 5 / (float) Graphics.Width, -0.2f, 3);
             boxNode1.SetScale(0.2f);
             boxNode1.SetWorldRotation(new Quaternion(0, 0, 45));
-            Piece box1 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
+            Piece box1 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f), gameResult, cameraNode);
             boxNode1.AddComponent(box1);
 
-            var boxNode2 = this.cameraNode.CreateChild();
+            /*var boxNode2 = this.cameraNode.CreateChild();
             boxNode2.Position = new Vector3(-(float)(Graphics.Width / 10) * 2 / (float)Graphics.Width, -0.4f, 3);
             boxNode2.SetScale(0.2f);
             Piece box2 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
@@ -261,7 +305,7 @@ namespace Nonstop.Forms.Game
             boxNode4.SetScale(0.2f);
             boxNode4.SetWorldRotation(new Quaternion(0, 0, -45));
             Piece box4 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f));
-            boxNode4.AddComponent(box4);
+            boxNode4.AddComponent(box4);*/
         }
         // Game paused outside of class
         // AppRemote or native app invokers will causes this function to run.
@@ -322,25 +366,20 @@ namespace Nonstop.Forms.Game
         }
         async void setPieces()
         {
-            
-            /*foreach (Beat b in runtimeData.data.beats)
-            {
-                var boxNode = plotNode.CreateChild();
-                boxNode.Position = new Vector3(0, 2, b.getStartMillis() / 100);
-                Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
-                boxNode.AddComponent(box);
-            }*/
+            int totalTap = 0;
 
             // NEW BEATS
             var seg = new Segment();
+            List<Segment> segments = runtimeData.data.segments.ToList<Segment>();
+            
             foreach (Beat b in runtimeData.data.beats)
             {
-                foreach (var s in runtimeData.data.segments)
+                foreach (Segment s in segments)
                 {
                     seg = s;
 
-                    var beat = b.getStartMillis() / 100;
-                    var segm = s.getStartMillis() / 100;
+                    var beat = b.getStartMillis() / 100.0f;
+                    var segm = s.getStartMillis() / 100.0f;
                     if (beat <= segm)
                     {
                         break;
@@ -349,41 +388,64 @@ namespace Nonstop.Forms.Game
                 if ( seg.millis > 0)
                 {
                     var boxNode = plotNode.CreateChild();
-                    boxNode.Position = new Vector3((float)((seg.getIndex() - 2) * 0.5), -1, (seg.getStartMillis() / 100 ) * gameSpeed);
-                    Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f));
-                    boxNode.AddComponent(box);
+                    boxNode.Position = new Vector3((float)((seg.getIndex() - 2) * 0.5f), -1, (seg.getStartMillis() / 100.0f ) * gameSpeed);
+                    Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f), gameResult, cameraNode, "Non");
+                    boxNode.Scale = new Vector3(0.6f, 0.6f, 0.6f);
+                    boxNode.AddComponent(box); totalTap++;
                 }
-                
+                segments.Remove(seg);
             }
+
+            this.gameResult.setTotalTap(totalTap);
         }
     }
     public class Piece : Component
     {
+        Node _base;
         Node itself;
         StaticModel model;
         Color color;
-        float speed;
+        string modelName;
+        float scaleFactor = 0.6f;
 
-        public Piece(Color color)
+        GameResult gameResult;
+        Node cameraNode;
+        
+        public Piece(Color color, GameResult gr, Node cn, string modelName)
         {
             this.color = color;
-            this.speed = 30;
+            this.gameResult = gr;
+            this.cameraNode = cn;
+            this.modelName = modelName;
+
             ReceiveSceneUpdates = true;
         }
         public override void OnAttachedToNode(Node node)
         {
+            this._base = node;
             itself = node.CreateChild();
-            itself.Scale = new Vector3(0.8f, 0.8f, 0.8f); //means zero height
+            itself.Scale = new Vector3(1.0f, 1.0f, 1.0f); //means zero height
             model = node.CreateComponent<StaticModel>();
-            model.Model = Application.ResourceCache.GetModel("Models/Non.mdl");
-            model.SetMaterial(Application.ResourceCache.GetMaterial("Materials/Non.xml"));
-            model.CastShadows = true;
+            model.Model = Application.ResourceCache.GetModel("Models/" + modelName + ".mdl");
+            model.SetMaterial(Application.ResourceCache.GetMaterial("Materials/" + modelName + ".xml"));
             
             base.OnAttachedToNode(node);
         }
-        /*protected override void OnUpdate(float timeStep)
+        protected override void OnUpdate(float timeStep)
         {
             base.OnUpdate(timeStep);
-        }*/
+            
+            if (itself.Parent.Position.Z < cameraNode.Position.Z + 14.0f)
+            {
+                scaleFactor += 0.01f;
+                _base.Scale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+            }
+            else if (itself.Parent.Position.Z < cameraNode.Position.Z)
+            {
+                itself.Parent.Remove();
+                gameResult.incraseCurrentMiss();
+                //Console.WriteLine("Node Removed");
+            }
+        }
     }
 }

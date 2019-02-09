@@ -1,0 +1,6 @@
+<material>
+  <texture unit="diffuse" name="Textures/Titled.png" />
+	<technique name="Techniques/NoTexture.xml"/>
+	<parameter name="MatDiffColor" value="0.64 0.64 0.64 1"/>
+	<parameter name="MatSpecColor" value="0.5 0.5 0.5 50"/>
+</material>
