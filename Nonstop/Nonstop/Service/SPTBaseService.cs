@@ -58,6 +58,7 @@ namespace Nonstop.Forms.Service
                     {
                         query.Add(entry.Key, entry.Value);
                     }
+                    baseUri.Path = path;
                     baseUri.Query = query.ToString();
                     Uri uri = new Uri(baseUri.ToString());
                     responseBody = await client.GetStringAsync(uri);
