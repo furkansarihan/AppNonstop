@@ -7,9 +7,10 @@ using Urho.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
-using Nonstop.Forms.DataManagement;
+using Nonstop.Forms.SQLite;
 using Nonstop.Forms.Network;
 using Nonstop.Forms.Spotify;
+using Color = Xamarin.Forms.Color;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
@@ -23,7 +24,6 @@ namespace Nonstop
         public DatabaseManager databaseManager;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
-        public ISPTGateway spotifyManager;
 
         public App()
         {

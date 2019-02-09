@@ -21,5 +21,7 @@ namespace Nonstop.Spotify
         [SQLite.Ignore]
         [JsonProperty("artists")]
         public Artist[] artists { get; set; }
+        [JsonProperty("uri")]
+        public string uri { get; set; }
     }
 }

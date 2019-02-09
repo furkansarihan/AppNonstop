@@ -75,9 +75,9 @@
     <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="27.0.2.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Implementations\AndroidSQLite .cs" />
+    <Compile Include="SQLite\AndroidSQLiteConnection .cs" />
     <Compile Include="Spotify\AndroidSPTAuthentication.cs" />
-    <Compile Include="Spotify\SpotifyAndroidCommunicator.cs" />
+    <Compile Include="Spotify\AndroidSPTCommunicator.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Renderers\RoundedContentViewRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

@@ -21,6 +21,9 @@ namespace Nonstop.Droid.Spotify
     {
         const int REQUEST_CODE = 1337;
 
+        private string accessToken;
+        private long tokenExpireAt;
+
         private EventHandler<TokenReceiverEventArgs>  _tokenReady;
         public event EventHandler<TokenReceiverEventArgs> tokenReady
         {
@@ -43,20 +46,38 @@ namespace Nonstop.Droid.Spotify
 
         public void authRequest(string[] scopes)
         {
-            /* SPT get token request */
-            AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(
-                SPTCredentials.CLIENT_ID, AuthenticationResponse.Type.Token, SPTCredentials.REDIRECT_URI);
-
-            builder.SetScopes(scopes);
-            builder.SetScopes(new string[] { "streaming" });
-            AuthenticationRequest request = builder.Build();
-
-            Activity currentAndroidContext = CrossCurrentActivity.Current.Activity;
-            if (currentAndroidContext is MainActivity)
+            if(isTokenExpired())
             {
-                ((MainActivity)currentAndroidContext).onActivityResult += new ActivityResultEventHandler(onActivityResult);
+                /* SPT get token request */
+                AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(
+                    SPTCredentials.CLIENT_ID, AuthenticationResponse.Type.Token, SPTCredentials.REDIRECT_URI);
+
+                builder.SetScopes(scopes);
+                AuthenticationRequest request = builder.Build();
+
+                Activity currentAndroidContext = CrossCurrentActivity.Current.Activity;
+                if (currentAndroidContext is MainActivity)
+                {
+                    ((MainActivity)currentAndroidContext).onActivityResult += new ActivityResultEventHandler(onActivityResult);
+                }
+                AuthenticationClient.OpenLoginActivity(currentAndroidContext, REQUEST_CODE, request);
+            } else
+            {
+                _tokenReady(this, new TokenReceiverEventArgs { token = accessToken });
             }
-            AuthenticationClient.OpenLoginActivity(currentAndroidContext, REQUEST_CODE, request);
+            
+        }
+
+        private void updateExpireTime(int expireInSec)
+        {
+            long timestamp = DateTime.Now.Ticks;
+            tokenExpireAt = timestamp + expireInSec;
+        }
+
+        private bool isTokenExpired()
+        {
+            long timestamp = DateTime.Now.Ticks;
+            return timestamp <= tokenExpireAt;
         }
 
         public void registerToken(ISPTTokenReceiver receiver)
@@ -77,7 +98,7 @@ namespace Nonstop.Droid.Spotify
                 if (response.GetType() == AuthenticationResponse.Type.Token)
                 {
                     string accessToken = response.AccessToken;
-                    _tokenReady(this, new TokenReceiverEventArgs {token = accessToken});
+                    _tokenReady(this, new TokenReceiverEventArgs { token = accessToken });
                 }
                 else if (response.GetType() == AuthenticationResponse.Type.Error)
                 {
