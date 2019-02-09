@@ -25,7 +25,7 @@ namespace Nonstop.Forms.Service.Spotify
             return await SPTBaseService<Playlist>.getAsync(path, token);
         }
 
-        static async Task<PagingObject<PlaylistTrack>> getPlaylistTracks(string token, string playlistID, int limit = 20, int offset = 0)
+        public static async Task<PagingObject<PlaylistTrack>> getPlaylistTracks(string token, string playlistID, int limit = 20, int offset = 0)
         {
             string path = String.Format("playlists/{0}/tracks", playlistID);
             Dictionary<string, string> queries = new Dictionary<string, string>();
@@ -33,5 +33,12 @@ namespace Nonstop.Forms.Service.Spotify
             queries.Add("offset", offset.ToString());
             return await SPTBaseService<PagingObject<PlaylistTrack>>.getAsync(path, queries, token);
         }
+
+        public static async Task<List<Image>> getPlaylistCoverImage(string token, string playlistID)
+        {
+            string path = String.Format("playlists/{0}/images", playlistID);
+            return await SPTBaseService<List<Image>>.getAsync(path, token);
+        }
+
     }
 }
