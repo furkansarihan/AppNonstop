@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using SQLite;
 
-namespace Nonstop.Forms.DataManagement
+namespace Nonstop.Forms.SQLite
 {
-    public interface ISQLite
+    public interface ISQLiteConnection
     {
         SQLiteConnection getConnection(string path, string db);
     }

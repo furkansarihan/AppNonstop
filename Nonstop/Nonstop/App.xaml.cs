@@ -1,15 +1,9 @@
-﻿using Nonstop.Forms.Game;
-using Nonstop.Forms.Pages;
-using System;
-using System.Collections.Generic;
-using Urho;
-using Urho.Forms;
+﻿using Nonstop.Forms.Pages;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
 using Nonstop.Forms.SQLite;
 using Nonstop.Forms.Network;
-using Nonstop.Forms.Spotify;
 using Color = Xamarin.Forms.Color;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
@@ -21,7 +15,6 @@ namespace Nonstop
         public ContentPage mainPageObject;
         GamePage gamePage;
         NavigationPage navigationPage;
-        public DatabaseManager databaseManager;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
 
@@ -30,10 +23,8 @@ namespace Nonstop
             InitializeComponent();
 
             // Generating Objects and setting App references
-            databaseManager = new DatabaseManager();
             dataProvider = new DataProvider();
             networkManager = new NetworkManager();
-            databaseManager.setAppReference(this);
             dataProvider.setAppReference(this);
             networkManager.setAppReference(this);
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Nonstop.Spotify;
 
 
-namespace Nonstop.Forms.DataManagement
+namespace Nonstop.Forms.SQLite
 {
     public class DataProvider
     {
@@ -23,20 +23,20 @@ namespace Nonstop.Forms.DataManagement
         {
             // if internet connection here
             // -- refresh getplaylists functions on network ---
-            
+
 
             // if no internet get form local database
             // return
-            return app.databaseManager.getAllPlaylists().Result;
+            return null;
         }
         public async Task<List<Track>> getTracks(String uri)
         {
-            return app.databaseManager.getTracks(uri).Result;
+            return null;
         }
 
         public bool getSpotifyConnection()
         {
-            return app.databaseManager.getSpotifyConnection().Result;
+            return false;
         }
     }
 }
