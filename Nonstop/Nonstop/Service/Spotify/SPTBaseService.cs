@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Nonstop.Forms.Service
+namespace Nonstop.Forms.Service.Spotify
 {
     class SPTBaseService<E> : BaseDispose
     {
