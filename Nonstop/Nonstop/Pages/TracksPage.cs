@@ -8,6 +8,9 @@ using Nonstop;
 using Nonstop.Forms.ViewModels;
 using Xamarin.Forms;
 using Nonstop.Spotify;
+using Nonstop.Forms.Spotify;
+using Nonstop.Forms.Entity.Spotify;
+using Nonstop.Forms.Service.Spotify;
 
 namespace Nonstop.Forms
 {
@@ -15,22 +18,24 @@ namespace Nonstop.Forms
     {
         private int _currentIndex;
         private List<Color> _backgroundColors = new List<Color>();
+        ISPTAuthentication authentication;
+        string playListId;
 
         public Wrapper Wrapper { get; set; }
         App app; // Application reference
+        
 
-        public TracksPage(App appref, String uri)
+        public TracksPage(App appref, string id)
         {
             InitializeComponent();
             app = appref;
+            playListId = id;
 
             Wrapper = new Wrapper
             {
                 Items = new List<CarouselItem>()
             };
 
-            var tdb = app.dataProvider.getTracks(uri).Result;
-            addTracksToCard(tdb);
         }
 
         protected override void OnAppearing()
@@ -42,6 +47,19 @@ namespace Nonstop.Forms
             {
                 page.BackgroundColor = _backgroundColors.First();
             }
+
+            authentication = DependencyService.Get<ISPTAuthentication>();
+            authentication.tokenReady += Authentication_tokenReady; ;
+            authentication.authRequest(new string[] { "streaming" });
+        }
+
+        private async void Authentication_tokenReady(object sender, TokenReceiverEventArgs e)
+        {
+            string token = e.token;
+
+            PagingObject<PlaylistTrack> tracks = await PlaylistService.getPlaylistTracks(token, playListId);
+            PlaylistTrack[] list = tracks.items;
+            addTracksToCard(list);
         }
 
         public void Handle_PositionSelected(object sender, PositionSelectedEventArgs e)
@@ -123,7 +141,7 @@ namespace Nonstop.Forms
             app.launchGame(selectedTrack.id);
         }
 
-        private void addTracksToCard(List<Track> tracks)
+        private void addTracksToCard(PlaylistTrack[] tracks)
         {
             if (Wrapper.Items == null)
             {
@@ -132,10 +150,10 @@ namespace Nonstop.Forms
             foreach (var t in tracks)
             {
                 CarouselTracklistlItem card = new CarouselTracklistlItem();
-                card.Title = t.name;
-                card.Name = t.name;
-                card.ImageSrc = "orange.png";
-                card.track = t;
+                card.Title = t.track.name;
+                card.Name = t.track.name;
+                //card.ImageSrc = t.track
+                card.track = t.track;
 
                 card.Position = 0;
                 card.BackgroundColor = Color.FromHex("#F5F5F5");

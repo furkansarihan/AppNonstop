@@ -12,9 +12,11 @@ namespace Nonstop.Forms.Pages
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class RetrySpotifyConnectionPage : ContentPage
 	{
-		public RetrySpotifyConnectionPage ()
+        App app;
+		public RetrySpotifyConnectionPage (App appref)
 		{
 			InitializeComponent ();
+            app = appref;
 		}
 	}
 }

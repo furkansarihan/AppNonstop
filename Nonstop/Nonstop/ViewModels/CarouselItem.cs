@@ -16,7 +16,6 @@ namespace Nonstop.Forms.ViewModels
         public string Type { get; set; }
         public string ImageSrc { get; set; }
         public int Rotation { get; set; }
-        public string Description { get; set; } = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean pretium dolor sed felis varius, at elementum nunc blandit.";
 
         double _position;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -42,7 +41,8 @@ namespace Nonstop.Forms.ViewModels
 
     public class CarouselPlaylistlItem : CarouselItem, INotifyPropertyChanged
     {
-        public TrackList playlist { get; set; }
+        public TrackList trackList { get; set; }
+        public int trackCount { get; set; }
     }
     public class CarouselTracklistlItem : CarouselItem, INotifyPropertyChanged
     {

@@ -11,14 +11,19 @@ using Nonstop.Spotify;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
-using Nonstop.Spotify.DatabaseObjects;
+using UIKit;
+using Nonstop.Forms.Controls;
+using Nonstop.Forms.Spotify;
+using Nonstop.Forms.Service.Spotify;
+using Nonstop.Forms.Entity.Spotify;
 
 namespace Nonstop.Forms
 {
-    public partial class TrackListsPage : ContentPage
+    public partial class TrackListsPage : ContentPage 
     {
         private int _currentIndex;
         private List<Color> _backgroundColors = new List<Color>();
+        ISPTAuthentication authentication;
 
         public Wrapper Wrapper { get; set; }
         App app; // Application reference
@@ -31,20 +36,33 @@ namespace Nonstop.Forms
             Wrapper = new Wrapper
             {
                 Items = new List<CarouselItem>()
-            };
-
-            var tldb = app.dataProvider.getAllPLaylists().Result;
-            addTrackListsToCards(tldb);
+            };          
         }
+        
         protected override void OnAppearing()
         {
             base.OnAppearing();
 
+            
             // Need to start somewhere...
             if (_backgroundColors.GetCount() > 0)
             {
                 page.BackgroundColor = _backgroundColors.First();
             }
+
+            authentication = DependencyService.Get<ISPTAuthentication>();
+            authentication.tokenReady += tokenReceived;
+            authentication.authRequest(new string[] { "streaming" });
+        }
+
+        private async void tokenReceived(object sender, TokenReceiverEventArgs e)
+        {
+            string token = e.token;
+
+            PagingObject<PlaylistSimplified> playlists = await PlaylistService.getUserPlaylists(token);
+            TrackList[] list = playlists.items;
+            addTrackListsToCards(list);
+            authentication.tokenReady -= tokenReceived;
         }
 
         public void Handle_PositionSelected(object sender, PositionSelectedEventArgs e)
@@ -122,11 +140,22 @@ namespace Nonstop.Forms
         private void itemTapped(object sender, EventArgs e)
         {
             CarouselPlaylistlItem selectedCorouselItem = (CarouselPlaylistlItem)Wrapper.Items[_currentIndex];
-            TrackList_db selectedPlaylist = selectedCorouselItem.playlist;
+            TrackList selectedPlaylist = selectedCorouselItem.trackList;
             Navigation.PushAsync(new TracksPage(app, selectedPlaylist.id));
         }
+        private void search_clicked(object sender, EventArgs e)
+        {
+            SearchBar bar = new SearchBar { };
+            bar.VerticalOptions = LayoutOptions.Start;
+            bar.BackgroundColor = Color.White;
 
-        private void addTrackListsToCards(List<TrackList_db> tracklist)
+            
+            page.Children.Add(bar);
+            bar.TranslateTo(0, -50,0);
+            bar.TranslateTo(0, 0,350,Easing.SinOut);
+            
+        }
+        private void addTrackListsToCards(TrackList[] tracklist)
         {
             if (Wrapper.Items == null)
             {
@@ -136,10 +165,11 @@ namespace Nonstop.Forms
             {
                 CarouselPlaylistlItem card = new CarouselPlaylistlItem();
                 card.Title = t.name;
-                card.Name = t.id;
-                card.ImageSrc = "https://i.scdn.co/image/b6be520fd1dc9feb84100be40f63de4f80694f18";
-                card.playlist = t;
-
+                card.Name = t.name;
+                card.ImageSrc = t.images[0].url;
+               // card.trackCount = t.tracks.items.Length;
+                card.trackList = t;
+                
                 card.Position = 0;
                 card.BackgroundColor = Color.FromHex("#F5F5F5");
                 card.StartColor = Color.FromHex("#7B1FA2");
