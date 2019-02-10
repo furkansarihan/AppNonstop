@@ -16,6 +16,9 @@ namespace Nonstop.Forms.Spotify
         void connect();
         void disconnect();
         void playTrack(string uri);
+        void pause();
+        void resume();
+        void seekTo(long positionMs);
         void registerEventHandler(ISPTConnectionEventReceiver receiver);
     }
     public enum SPTConnectionResult
