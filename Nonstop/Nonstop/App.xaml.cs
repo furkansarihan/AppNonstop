@@ -4,12 +4,13 @@ using Xamarin.Forms.Xaml;
 using Nonstop.Forms;
 using Nonstop.Forms.SQLite;
 using Nonstop.Forms.Network;
+using Nonstop.Forms.Spotify;
 using Color = Xamarin.Forms.Color;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Nonstop
 {
-    public partial class App : Xamarin.Forms.Application
+    public partial class App : Xamarin.Forms.Application, ISPTConnectionEventReceiver
     {
         //public MainPage mainPageObject;
         public ContentPage mainPageObject;
@@ -17,6 +18,7 @@ namespace Nonstop
         NavigationPage navigationPage;
         public DataProvider dataProvider;
         public NetworkManager networkManager;
+        public ISPTCommunicator spotifyCommunicator;
 
         public App()
         {
@@ -28,6 +30,9 @@ namespace Nonstop
             dataProvider.setAppReference(this);
             networkManager.setAppReference(this);
 
+            spotifyCommunicator = DependencyService.Get<ISPTCommunicator>();
+            spotifyCommunicator.registerEventHandler(this);
+            
             initApplication();
         }
         public void initApplication()
@@ -41,16 +46,18 @@ namespace Nonstop
             {
                 //
             }*/
-            launchPlaylistsPage();
+            MainPage = new NavigationPage(new SpotifyConnectionPage(this));
+           // MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
+            MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.FromHex("#000000"));
+
         }
         public void launchPlaylistsPage()
         {
-            mainPageObject = new Forms.TrackListsPage(this); // send reference of App object
+            mainPageObject = new Forms.TrackListsPage(this); // send reference of App objectC:\Users\enesk\Documents\GIT\AppNonstop\Nonstop\Nonstop\App.xaml.cs
             MainPage= new NavigationPage(mainPageObject);
-            MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
+           // MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
             MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.FromHex("#000000"));
             
-
         }
 
         public void launchGame(string track_uri)
@@ -88,6 +95,17 @@ namespace Nonstop
         protected override void OnResume()
         {
             // Handle when your app resumes
+        }
+
+        public void onResult(object sender, SPTGatewayEventArgs args)
+        {
+           if( args.result == SPTConnectionResult.SpotifyNotFound)
+            {
+
+            }
+           else if(args.result == SPTConnectionResult.Success){
+                launchPlaylistsPage();
+            }
         }
     }
 }

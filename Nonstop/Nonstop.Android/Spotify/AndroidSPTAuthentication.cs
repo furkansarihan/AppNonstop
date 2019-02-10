@@ -29,14 +29,9 @@ namespace Nonstop.Droid.Spotify
         {
             add
             {
-                if (_tokenReady == null || !_tokenReady.GetInvocationList().Contains(value))
-                {
+                
                     _tokenReady += value;
-                }
-                else
-                {
-                    // Do here some logging
-                }
+             
             }
             remove
             {

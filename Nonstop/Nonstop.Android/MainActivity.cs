@@ -35,13 +35,12 @@ namespace Nonstop.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             nonstopForms = new App(); 
             LoadApplication(nonstopForms);
-
+                
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             
             //change status bar color
-            Window.SetStatusBarColor(Android.Graphics.Color.Argb(255, 255, 255, 255));
             Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
-
+            
             //===========================virtual keys 
             int uiOptions = (int)Window.DecorView.SystemUiVisibility;
             

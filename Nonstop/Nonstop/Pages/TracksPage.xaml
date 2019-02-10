@@ -6,7 +6,7 @@
             <controls:CarouselViewControl.ItemTemplate>
                 <DataTemplate x:Name="datatemplate">
                     <Grid Padding="32,64,32,64">
-                        <custom:RoundedContentView CornerRadius="32" BackgroundColor="#FFFFFF">
+                        <custom:RoundedContentView  CornerRadius="32" BackgroundColor="#FFFFFF">
                             <StackLayout>
                                 <StackLayout VerticalOptions="Fill" HorizontalOptions="Fill">
                                     <custom:RoundedContentView VerticalOptions="FillAndExpand" HeightRequest="500" CornerRadius="32" HasBackgroundGradient="true" GradientStartColor="{Binding StartColor}" GradientEndColor="{Binding EndColor}" >
@@ -26,6 +26,7 @@
                     </Grid>
                 </DataTemplate>
             </controls:CarouselViewControl.ItemTemplate>
+            
         </controls:CarouselViewControl>
     </Grid>
 </ContentPage>
