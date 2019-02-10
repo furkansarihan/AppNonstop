@@ -68,8 +68,9 @@ namespace Nonstop.Droid.Spotify
             
         }
 
-        private void updateExpireTime(int expireInSec)
+        private void updateToken(string token, int expireInSec)
         {
+            accessToken = token;
             long timestamp = DateTime.Now.Ticks;
             tokenExpireAt = timestamp + expireInSec;
         }
@@ -98,8 +99,9 @@ namespace Nonstop.Droid.Spotify
 
                 if (response.GetType() == AuthenticationResponse.Type.Token)
                 {
-                    string accessToken = response.AccessToken;
-                    _tokenReady(this, new TokenReceiverEventArgs { token = accessToken });
+                    string responseToken = response.AccessToken;
+                    _tokenReady(this, new TokenReceiverEventArgs { token = responseToken });
+                    updateToken(responseToken, response.ExpiresIn);
                 }
                 else if (response.GetType() == AuthenticationResponse.Type.Error)
                 {

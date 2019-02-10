@@ -60,7 +60,6 @@ namespace Nonstop.Droid.Spotify
             spotifyAppRemote = appRemote;
             connectionEventHandler(this, new SPTGatewayEventArgs { result = SPTConnectionResult.Success });
 
-            playTrack("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
         }
         public void onFailed(Throwable exception)
         {
@@ -84,6 +83,30 @@ namespace Nonstop.Droid.Spotify
         public void registerEventHandler(ISPTConnectionEventReceiver receiver)
         {
             connectionEventHandler += receiver.onResult;
+        }
+
+        public void pause()
+        {
+            if(spotifyAppRemote != null)
+            {
+                spotifyAppRemote.PlayerApi.Pause();
+            }
+        }
+
+        public void resume()
+        {
+            if (spotifyAppRemote != null)
+            {
+                spotifyAppRemote.PlayerApi.Resume();
+            }
+        }
+
+        public void seekTo(long positionMs)
+        {
+            if (spotifyAppRemote != null)
+            {
+                spotifyAppRemote.PlayerApi.SeekTo(positionMs);
+            }
         }
     }
     
