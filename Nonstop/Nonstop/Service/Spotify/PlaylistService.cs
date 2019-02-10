@@ -9,13 +9,13 @@ namespace Nonstop.Forms.Service.Spotify
 {
     class PlaylistService
     {
-        public static async Task<PagingObject<Playlist>> getUserPlaylists(string token, int limit = 20, int offset = 0)
+        public static async Task<PagingObject<PlaylistSimplified>> getUserPlaylists(string token, int limit = 20, int offset = 0)
         {
             string path = "me/playlists";
             Dictionary<string, string> queries = new Dictionary<string, string>();
             queries.Add("limit", limit.ToString());
             queries.Add("offset", offset.ToString());
-            return await SPTBaseService<PagingObject<Playlist>>.getAsync(path, queries, token);
+            return await SPTBaseService<PagingObject<PlaylistSimplified>>.getAsync(path, queries, token);
         }
 
         public static async Task<Playlist> getPlaylist(string token, string playlistID)
