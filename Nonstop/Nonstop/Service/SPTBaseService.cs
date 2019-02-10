@@ -35,7 +35,11 @@ namespace Nonstop.Forms.Service
                     Console.WriteLine("\nException Caught!");
                     Console.WriteLine("Message :{0} ", e.Message);
                 }
-                return JsonConvert.DeserializeObject<E>(responseBody);
+                // Some of fields can be null, like image object's width. In this case, just ignore it.
+                return JsonConvert.DeserializeObject<E>(responseBody, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
             }
         }
 
@@ -58,7 +62,7 @@ namespace Nonstop.Forms.Service
                     {
                         query.Add(entry.Key, entry.Value);
                     }
-                    baseUri.Path = path;
+                    baseUri.Path += path;
                     baseUri.Query = query.ToString();
                     Uri uri = new Uri(baseUri.ToString());
                     responseBody = await client.GetStringAsync(uri);
@@ -68,8 +72,10 @@ namespace Nonstop.Forms.Service
                     Console.WriteLine("\nException Caught!");
                     Console.WriteLine("Message :{0} ", e.Message);
                 }
-                Console.WriteLine(responseBody);
-                return JsonConvert.DeserializeObject<E>(responseBody);
+                return JsonConvert.DeserializeObject<E>(responseBody, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
             }
         }
 
