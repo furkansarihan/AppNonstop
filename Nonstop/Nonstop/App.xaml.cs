@@ -20,6 +20,8 @@ namespace Nonstop
         public NetworkManager networkManager;
         public ISPTCommunicator spotifyCommunicator;
 
+        bool gameActive = false;
+
         public App()
         {
             InitializeComponent();
@@ -65,6 +67,7 @@ namespace Nonstop
             // launching game with track_uri
             gamePage = new GamePage(this, track_uri);
             MainPage = gamePage;
+            gameActive = true;
         }
 
         public void launchSpotifyConnectPage()
@@ -103,8 +106,16 @@ namespace Nonstop
             {
 
             }
-           else if(args.result == SPTConnectionResult.Success){
-                launchPlaylistsPage();
+           else if(args.result == SPTConnectionResult.Success)
+            {
+                if (gameActive)
+                {
+
+                }
+                else
+                {
+                    launchPlaylistsPage();
+                }
             }
         }
     }

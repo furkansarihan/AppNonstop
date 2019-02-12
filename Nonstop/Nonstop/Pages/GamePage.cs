@@ -1,4 +1,7 @@
 ﻿using Nonstop.Forms.Game;
+using Nonstop.Forms.Game.Utils;
+using Nonstop.Forms.Service.Nonstop;
+using Nonstop.Forms.Spotify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +18,15 @@ namespace Nonstop.Forms.Pages
         UrhoSurface urhoSurface;
         Nonstop.Forms.Game.Game urhoGame;
         GameManager gameManager;
+        GameData gameData;
 
-        string track_uri;
+        ISPTCommunicator spotifyConnection;
+        string track_id;
 
-        public GamePage (App application, string track_uri)
+        public GamePage (App application, string track_id)
 		{
             this.app = application;
-            this.track_uri = track_uri;
+            this.track_id = track_id;
             urhoSurface = new UrhoSurface();
             urhoSurface.VerticalOptions = LayoutOptions.FillAndExpand;
 
@@ -34,10 +39,30 @@ namespace Nonstop.Forms.Pages
             this.launchGame();
         }
 
-        public async void launchGame() {
+        public async void launchGame()
+        {
             urhoGame = await urhoSurface.Show<Nonstop.Forms.Game.Game>(new ApplicationOptions("Data"));
-            gameManager = new GameManager(this.app, ref urhoGame, this.track_uri); // track_id for test data
+
+            spotifyConnection = DependencyService.Get<ISPTCommunicator>();
+            spotifyConnection.connectionEventHandler += connectionEventHandler;
+
+            ISPTAuthentication auth = DependencyService.Get<ISPTAuthentication>();
+            auth.tokenReady += async (object sender, TokenReceiverEventArgs args) =>
+            {
+                gameData = await NonstopService.getGameData(track_id, args.token);
+                urhoGame.setGameData(gameData, spotifyConnection, track_id);
+            };
+
+            auth.authRequest(new string[] { });
+            spotifyConnection.connect();
         }
-        
+        private void connectionEventHandler(object sender, SPTGatewayEventArgs e)
+        {
+            if (e.result == SPTConnectionResult.Success)
+            {
+                urhoGame.setHasConnection(true);
+            }
+        }
+
     }
 }

@@ -89,7 +89,6 @@ namespace Nonstop.Forms.Analysis
                     }
                 }
             }
-
             return false;
         }
         public uint getTrackDuration()
@@ -117,8 +116,9 @@ namespace Nonstop.Forms.Analysis
         public double start { get; set; }
         [JsonProperty("pitches")]
         public double[] pitches { get; set; }
-
+        [JsonProperty("index")]
         public int index { get; set; }
+        [JsonProperty("millis")]
         public uint millis { get; set; }
 
         public uint getStartMillis()
@@ -127,20 +127,6 @@ namespace Nonstop.Forms.Analysis
         }
         public int getIndex()
         {
-            /*int biggestI = -1;
-            double biggestN = 0.99;
-
-            for (int i = 0; i < pitches.Length; i++)
-            {
-                if (pitches[i] > biggestN)
-                {
-                    biggestN = pitches[i];
-                    biggestI = i;
-                }
-            }
-
-            return biggestI;*/
-
             return index;
         }
     }

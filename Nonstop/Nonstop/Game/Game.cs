@@ -11,6 +11,8 @@ using Urho.Shapes;
 
 using Nonstop.Forms.Analysis;
 using Nonstop.Forms.Game.Utils;
+using Nonstop.Forms.Spotify;
+using Xamarin.Forms;
 
 namespace Nonstop.Forms.Game
 {
@@ -21,14 +23,16 @@ namespace Nonstop.Forms.Game
      **/
     public class Game : Urho.Application
     {
-        bool movementsEnabled;
         bool first = true;
         bool paused = false;
-        bool hasXform = false;
+        bool hasGameData = false;
         bool hasGameManager = false;
+        bool hasSpotifyConnection = false;
 
-        GameManager gameManager;
+        private string track_id;
+
         GameResult gameResult;
+        ISPTCommunicator spotifyConnection;
 
         Scene scene;
         Node plotNode;
@@ -41,17 +45,16 @@ namespace Nonstop.Forms.Game
         Text timeText;
         Text scoreText;
         Text nodeNumber;
-        Button pauseButton;
-        Button resumeButton;
-        Button endGameButton;
+        Urho.Gui.Button pauseButton;
+        Urho.Gui.Button resumeButton;
+        Urho.Gui.Button endGameButton;
         List<Piece> pieces;
 
-        Xform runtimeData;
+        //Xform runtimeData;
+        GameData runtimeData;
         NonstopTime nonstopTime;
         
-        public IEnumerable<Piece> Bars => pieces;
         float gameSpeed = 1.0f;
-        float loc = 1.0f;
 
         int screenHeight = (int)Xamarin.Forms.Device.Info.PixelScreenSize.Height;
         int screenWidth = (int)Xamarin.Forms.Device.Info.PixelScreenSize.Width;
@@ -71,14 +74,14 @@ namespace Nonstop.Forms.Game
                 e.Handled = true;
             };
         }
-
+        
         protected override void Start()
         {
             base.Start();
             CreateScene();
             SetupViewport();
         }
-
+        
         async void CreateScene()
         {
             Input.SubscribeToTouchEnd(OnTouched);
@@ -159,8 +162,10 @@ namespace Nonstop.Forms.Game
                 scoreText.Value = gameResult.getUIScore();
                 // Number of nodes
                 nodeNumber.Value = plotNode.GetNumChildren().ToString();
+                
                 // Move Camera
-                cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (((nonstopTime.currentMillis) / 100.0f) * gameSpeed) - 1.0f));
+                if (this.first == false)
+                    cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (((nonstopTime.currentMillis) / 100.0f) * gameSpeed) - 1.0f));
 
                 //cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (loc * gameSpeed) - 1.0f));
                 //loc += 0.3f;
@@ -182,10 +187,11 @@ namespace Nonstop.Forms.Game
                 }*/
 
                 // This is for first launch...
-                if (hasXform && first)
+                if (hasSpotifyConnection && hasGameData && first)
                 {
-                    this.setPieces();
                     this.first = false;
+                    this.setPieces();
+                    spotifyConnection.playTrack("spotify:track:" + track_id);
                     nonstopTime.refreshTime(Urho.Time.SystemTime);
                 }
             }
@@ -198,7 +204,7 @@ namespace Nonstop.Forms.Game
             timeText.HorizontalAlignment = HorizontalAlignment.Right;
             timeText.VerticalAlignment = VerticalAlignment.Bottom;
             timeText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
-            timeText.SetColor(Color.White);
+            timeText.SetColor(Urho.Color.White);
 
             // Score text
             scoreText = new Text();
@@ -206,7 +212,7 @@ namespace Nonstop.Forms.Game
             scoreText.HorizontalAlignment = HorizontalAlignment.Right;
             scoreText.VerticalAlignment = VerticalAlignment.Top;
             scoreText.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
-            scoreText.SetColor(Color.White);
+            scoreText.SetColor(Urho.Color.White);
 
             // Number of nodes displayed here
             nodeNumber = new Text();
@@ -214,10 +220,10 @@ namespace Nonstop.Forms.Game
             nodeNumber.HorizontalAlignment = HorizontalAlignment.Left;
             nodeNumber.VerticalAlignment = VerticalAlignment.Bottom;
             nodeNumber.SetFont(CoreAssets.Fonts.AnonymousPro, Graphics.Width / 10);
-            nodeNumber.SetColor(Color.White);
+            nodeNumber.SetColor(Urho.Color.White);
 
             // Pause Button
-            pauseButton = new Button();
+            pauseButton = new Urho.Gui.Button();
             //pauseButton.SetColor(new Color(0.2f, 0.2f, 0.7f));
             pauseButton.Texture = ResourceCache.GetTexture2D("UI/pause_button.png");
             pauseButton.SetPosition(20, 20);
@@ -227,14 +233,14 @@ namespace Nonstop.Forms.Game
             });
 
             Text pauseText = new Text();
-            pauseText.SetColor(Color.White);
+            pauseText.SetColor(Urho.Color.White);
             pauseButton.AddChild(pauseText);
             pauseText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
             pauseText.Value = "Pause";
 
             // Resume Button
-            resumeButton = new Button();
-            resumeButton.SetColor(new Color(0.7f, 0.2f, 0.2f));
+            resumeButton = new Urho.Gui.Button();
+            resumeButton.SetColor(new Urho.Color(0.7f, 0.2f, 0.2f));
             resumeButton.SetPosition(0, -(screenHeight / 4));
             resumeButton.HorizontalAlignment = HorizontalAlignment.Center;
             resumeButton.VerticalAlignment = VerticalAlignment.Center;
@@ -245,13 +251,13 @@ namespace Nonstop.Forms.Game
 
             Text resumeText = new Text();
             resumeButton.AddChild(resumeText);
-            resumeText.SetColor(Color.White);
+            resumeText.SetColor(Urho.Color.White);
             resumeText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
             resumeText.Value = "Resume";
 
             // End Game Button
-            endGameButton = new Button();
-            endGameButton.SetColor(new Color(0.1f, 0.7f, 0.2f));
+            endGameButton = new Urho.Gui.Button();
+            endGameButton.SetColor(new Urho.Color(0.1f, 0.7f, 0.2f));
             endGameButton.SetPosition(250, 600);
             endGameButton.SetSize(100, 100); endGameButton.Visible = false;
             endGameButton.SubscribeToReleased(args => {
@@ -259,7 +265,7 @@ namespace Nonstop.Forms.Game
             });
 
             Text endGameButtonText = new Text();
-            endGameButtonText.SetColor(Color.White);
+            endGameButtonText.SetColor(Urho.Color.White);
             endGameButton.AddChild(endGameButtonText);
             endGameButtonText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
             endGameButtonText.Value = "End Game";
@@ -278,7 +284,7 @@ namespace Nonstop.Forms.Game
             boxNode1.Position = new Vector3(0, 0, 0);
             boxNode1.Scale = new Vector3(0.8f, 0.8f, 0.8f);
             boxNode1.SetWorldRotation(new Quaternion(0, 0, 0));
-            Piece box1 = new Piece(new Color(1.0f, 1.0f, 1.0f, 0.4f), gameResult, cameraNode , "Reference");
+            Piece box1 = new Piece(new Urho.Color(1.0f, 1.0f, 1.0f, 0.4f), gameResult, cameraNode , "Reference");
             boxNode1.AddComponent(box1);
 
             /*var boxNode1 = this.cameraNode.CreateChild();
@@ -335,65 +341,39 @@ namespace Nonstop.Forms.Game
             // gameManager.end(Result gameresult);
             if (hasGameManager)
             {
-                gameManager.end(this.gameResult);
-            }
-        }
-        
-        // This function includes a while loop that
-        // finishes it's work when Xform is here
-        void waitForXform(){
-            while(!hasXform){
-                this.setPieces();
+                // gameManager.end(this.gameResult);
             }
         }
 
-        async void SetupViewport()
+        void SetupViewport()
         {
             var renderer = Renderer;
             vp = new Viewport(Context, scene, camera, null);
-            vp.SetClearColor(Color.Black);
+            vp.SetClearColor(Urho.Color.Black);
             renderer.SetViewport(0, vp);
         }
-        public async void setXform(Xform data)
+        public async void setGameData(GameData data, ISPTCommunicator conn, string track_id)
         {
             this.runtimeData = data;
-            this.hasXform = true;
+            this.spotifyConnection = conn;
+            this.track_id = track_id;
+            this.hasGameData = true;
         }
-        public async void setGameManager(GameManager gameManager)
+        public void setHasConnection(bool b)
         {
-            this.gameManager = gameManager;
-            this.hasGameManager = true;
+            this.hasSpotifyConnection = b;
         }
         async void setPieces()
         {
             int totalTap = 0;
 
-            // NEW BEATS
-            var seg = new Segment();
-            List<Segment> segments = runtimeData.data.segments.ToList<Segment>();
-            
-            foreach (Beat b in runtimeData.data.beats)
+            foreach (Item i in runtimeData.items)
             {
-                foreach (Segment s in segments)
-                {
-                    seg = s;
-
-                    var beat = b.getStartMillis() / 100.0f;
-                    var segm = s.getStartMillis() / 100.0f;
-                    if (beat <= segm)
-                    {
-                        break;
-                    }
-                }
-                if ( seg.millis > 0)
-                {
-                    var boxNode = plotNode.CreateChild();
-                    boxNode.Position = new Vector3((float)((seg.getIndex() - 2) * 0.5f), -1, (seg.getStartMillis() / 100.0f ) * gameSpeed);
-                    Piece box = new Piece(new Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f), gameResult, cameraNode, "Non");
-                    boxNode.Scale = new Vector3(0.6f, 0.6f, 0.6f);
-                    boxNode.AddComponent(box); totalTap++;
-                }
-                segments.Remove(seg);
+                var boxNode = plotNode.CreateChild();
+                boxNode.Position = new Vector3((float)((i.index - 2) * 0.5f), -1, (i.start * 10.0f) * gameSpeed);
+                Piece box = new Piece(new Urho.Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f), gameResult, cameraNode, "Non");
+                boxNode.Scale = new Vector3(0.6f, 0.6f, 0.6f);
+                boxNode.AddComponent(box); totalTap++;
             }
 
             this.gameResult.setTotalTap(totalTap);
@@ -404,14 +384,14 @@ namespace Nonstop.Forms.Game
         Node _base;
         Node itself;
         StaticModel model;
-        Color color;
+        Urho.Color color;
         string modelName;
         float scaleFactor = 0.6f;
 
         GameResult gameResult;
         Node cameraNode;
         
-        public Piece(Color color, GameResult gr, Node cn, string modelName)
+        public Piece(Urho.Color color, GameResult gr, Node cn, string modelName)
         {
             this.color = color;
             this.gameResult = gr;
