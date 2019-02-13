@@ -102,7 +102,7 @@ namespace Nonstop.Forms.Game
             camera.FarClip = 30.0f;
             cameraNode.Position = new Vector3(0, 0, 0);
             //cameraNode.Rotation = new Quaternion(0.0f, 0.0f, 0.0f);
-            cameraNode.Rotate(new Quaternion(15.0f, 0.0f, 0.0f));
+            //cameraNode.Rotate(new Quaternion(15.0f, 0.0f, 0.0f));
 
             /*Node table = cameraNode.CreateChild();
             var obj = table.CreateComponent<Box>();
@@ -149,7 +149,7 @@ namespace Nonstop.Forms.Game
             }
         }
 
-        protected override void OnUpdate(float timeStep)
+        protected override async void OnUpdate(float timeStep)
         {
             if (!this.paused) // not paused
             {
@@ -162,11 +162,15 @@ namespace Nonstop.Forms.Game
                 scoreText.Value = gameResult.getUIScore();
                 // Number of nodes
                 nodeNumber.Value = plotNode.GetNumChildren().ToString();
-                
+
+                float f = 0;
+                if (this.first == false)
+                    f = Convert.ToSingle(await spotifyConnection.playerPosition()) / 100.0f * gameSpeed - 4.0f;
+
                 // Move Camera
                 if (this.first == false)
-                    cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (((nonstopTime.currentMillis) / 100.0f) * gameSpeed) - 1.0f));
-
+                    cameraNode.SetWorldPosition(new Vector3(0.0f, 0.0f, f));
+                
                 //cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (loc * gameSpeed) - 1.0f));
                 //loc += 0.3f;
                 // Check for section change
@@ -372,7 +376,7 @@ namespace Nonstop.Forms.Game
                 var boxNode = plotNode.CreateChild();
                 boxNode.Position = new Vector3((float)((i.index - 2) * 0.5f), -1, (i.start * 10.0f) * gameSpeed);
                 Piece box = new Piece(new Urho.Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f), gameResult, cameraNode, "Non");
-                boxNode.Scale = new Vector3(0.6f, 0.6f, 0.6f);
+                boxNode.Scale = new Vector3(0.4f, 0.4f, 0.4f);
                 boxNode.AddComponent(box); totalTap++;
             }
 
@@ -417,15 +421,16 @@ namespace Nonstop.Forms.Game
             
             if (itself.Parent.Position.Z < cameraNode.Position.Z + 14.0f)
             {
-                scaleFactor += 0.01f;
+                scaleFactor += 0.006f;
                 _base.Scale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
             }
-            else if (itself.Parent.Position.Z < cameraNode.Position.Z)
+
+            /*if (itself.Parent.Position.Z < cameraNode.Position.Z)
             {
                 itself.Parent.Remove();
                 gameResult.incraseCurrentMiss();
                 //Console.WriteLine("Node Removed");
-            }
+            }*/
         }
     }
 }
