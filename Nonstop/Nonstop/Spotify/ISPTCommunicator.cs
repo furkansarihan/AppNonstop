@@ -19,6 +19,7 @@ namespace Nonstop.Forms.Spotify
         void pause();
         void resume();
         void seekTo(long positionMs);
+        Task<long> playerPosition();
         void registerEventHandler(ISPTConnectionEventReceiver receiver);
     }
     public enum SPTConnectionResult

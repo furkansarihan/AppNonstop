@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Util;
 using Com.Spotify.Android.Appremote.Api;
 using Com.Spotify.Android.Appremote.Api.Error;
+using Com.Spotify.Protocol.Client;
+using Com.Spotify.Protocol.Types;
 using Com.Spotify.Sdk.Android.Authentication;
 using Java.Lang;
+using Java.Util.Concurrent;
 using Nonstop.Droid;
 using Nonstop.Droid.Spotify;
 using Nonstop.Forms.Spotify;
@@ -107,6 +111,16 @@ namespace Nonstop.Droid.Spotify
             {
                 spotifyAppRemote.PlayerApi.SeekTo(positionMs);
             }
+        }
+
+        public async Task<long> playerPosition()
+        {
+            return await Task.Run<long>(() =>
+            {
+                IResult s = spotifyAppRemote.PlayerApi.PlayerState.Await(10, TimeUnit.Seconds);
+                PlayerState state = (PlayerState) s.Data;
+                return state.PlaybackPosition;
+            });
         }
     }
     
