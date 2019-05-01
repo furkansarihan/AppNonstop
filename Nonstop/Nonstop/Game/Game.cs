@@ -38,6 +38,7 @@ namespace Nonstop.Forms.Game
         Node plotNode;
 
         Node cameraNode;
+        Node refBall;
         public static Camera camera;
         Viewport vp;
 
@@ -53,8 +54,11 @@ namespace Nonstop.Forms.Game
         //Xform runtimeData;
         GameData runtimeData;
         NonstopTime nonstopTime;
-        
+        public Stack<Piece> piecesStack;
+
         float gameSpeed = 1.0f;
+        float cameraDistance = 5.0f;
+        float cameraY = 0.0f;
 
         int screenHeight = (int)Xamarin.Forms.Device.Info.PixelScreenSize.Height;
         int screenWidth = (int)Xamarin.Forms.Device.Info.PixelScreenSize.Width;
@@ -99,8 +103,8 @@ namespace Nonstop.Forms.Game
             // Camera
             cameraNode = scene.CreateChild();
             camera = cameraNode.CreateComponent<Camera>();
-            camera.FarClip = 30.0f;
-            cameraNode.Position = new Vector3(0, 0, 0);
+            camera.FarClip = 250.0f;
+            cameraNode.Position = new Vector3(0, 0, -5.0f);
             //cameraNode.Rotation = new Quaternion(0.0f, 0.0f, 0.0f);
             //cameraNode.Rotate(new Quaternion(15.0f, 0.0f, 0.0f));
 
@@ -131,6 +135,7 @@ namespace Nonstop.Forms.Game
             pieces = new List<Piece>(size * size);
             this.createUI(); // Create User Interface
             //this.createReferences(); // Clickable references
+            this.piecesStack = new Stack<Piece>();
 
             Input.SetMouseVisible(true, false);
         }
@@ -163,14 +168,21 @@ namespace Nonstop.Forms.Game
                 // Number of nodes
                 nodeNumber.Value = plotNode.GetNumChildren().ToString();
 
-                float f = 0;
                 if (this.first == false)
-                    f = Convert.ToSingle(await spotifyConnection.playerPosition()) / 100.0f * gameSpeed - 4.0f;
+                {
+                    float playerPositionZ = Convert.ToSingle(await spotifyConnection.playerPosition()) / 100.0f;
+                    cameraNode.SetWorldPosition(new Vector3(0.0f, cameraY, playerPositionZ - cameraDistance));
+                    refBall.SetWorldPosition(new Vector3(refBall.Position.X, refBall.Position.Y, playerPositionZ));
+                }
+
+                /*float f = 0;
+                if (this.first == false)
+                    f = Convert.ToSingle(await spotifyConnection.playerPosition()) / 100.0f * gameSpeed;
 
                 // Move Camera
                 if (this.first == false)
-                    cameraNode.SetWorldPosition(new Vector3(0.0f, 0.0f, f));
-                
+                    cameraNode.SetWorldPosition(new Vector3(0.0f, 0.0f, f));*/
+
                 //cameraNode.SetWorldPosition(new Vector3(0, 3.4f, (loc * gameSpeed) - 1.0f));
                 //loc += 0.3f;
                 // Check for section change
@@ -195,6 +207,8 @@ namespace Nonstop.Forms.Game
                 {
                     this.first = false;
                     this.setPieces();
+                    this.createReferences();
+                    this.refBallstartAnimation();
                     spotifyConnection.playTrack("spotify:track:" + track_id);
                     nonstopTime.refreshTime(Urho.Time.SystemTime);
                 }
@@ -284,12 +298,12 @@ namespace Nonstop.Forms.Game
 
         public void createReferences()
         {
-            var boxNode1 = this.cameraNode.CreateChild();
-            boxNode1.Position = new Vector3(0, 0, 0);
-            boxNode1.Scale = new Vector3(0.8f, 0.8f, 0.8f);
-            boxNode1.SetWorldRotation(new Quaternion(0, 0, 0));
-            Piece box1 = new Piece(new Urho.Color(1.0f, 1.0f, 1.0f, 0.4f), gameResult, cameraNode , "Reference");
-            boxNode1.AddComponent(box1);
+            refBall = plotNode.CreateChild();
+            refBall.Position = new Vector3(0, -1.0f, 0);
+            refBall.Scale = new Vector3(0.8f, 0.8f, 0.8f);
+            refBall.SetWorldRotation(new Quaternion(0, 0, 0));
+            ReferenceBall reference = new ReferenceBall(new Urho.Color(1.0f, 1.0f, 1.0f, 0.4f), gameResult, cameraNode, (Game)this, "Reference");
+            refBall.AddComponent(reference);
 
             /*var boxNode1 = this.cameraNode.CreateChild();
             boxNode1.Position = new Vector3(-(float)(Graphics.Width / 10) * 5 / (float) Graphics.Width, -0.2f, 3);
@@ -371,17 +385,64 @@ namespace Nonstop.Forms.Game
         {
             int totalTap = 0;
 
-            foreach (Item i in runtimeData.items)
+            foreach (Item i in runtimeData.items.Reverse())
             {
                 var boxNode = plotNode.CreateChild();
-                boxNode.Position = new Vector3((float)((i.index - 2) * 0.5f), -1, (i.start * 10.0f) * gameSpeed);
-                Piece box = new Piece(new Urho.Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f), gameResult, cameraNode, "Non");
+                boxNode.Position = new Vector3((float)((i.index - 1.5f) * 0.5f), -1, (i.start * 10.0f) * gameSpeed);
+                Piece box = new Piece(new Urho.Color(RandomHelper.NextRandom(), RandomHelper.NextRandom(), RandomHelper.NextRandom(), 0.9f), gameResult, cameraNode, refBall, (Game)this, "Plane");
                 boxNode.Scale = new Vector3(0.4f, 0.4f, 0.4f);
-                boxNode.AddComponent(box); totalTap++;
+                boxNode.AddComponent(box);
+                totalTap++;
+                piecesStack.Push(box);
             }
 
             this.gameResult.setTotalTap(totalTap);
         }
+        public void removeElement()
+        {
+            // control for ending 
+            if (piecesStack.Count != 0)
+            {
+                Piece last = piecesStack.Pop();
+                refBallstartAnimation();
+            }else
+            {
+                this.endGame();
+            }
+            
+        }
+
+        public void refBallstartAnimation()
+        {
+            float refBallHeight = 0.0f;
+            // mesafeyi ölç ve zamana çevir
+            Piece peeked = piecesStack.Peek();
+            Vector3 peekedPosition = peeked.getItselfPosition();
+            float nextPieceZ = peekedPosition.Z;
+            float refZ = refBall.Position.Z;
+            float totalDistance = Math.Abs(nextPieceZ - refZ);
+
+            //fix metric here*******************************************
+            float fixedTime = totalDistance / 10.0f;
+
+            refBall.SetWorldPosition(new Vector3(peekedPosition.X, -1.0f, refZ));
+
+            // mesafe ile zaman endeksli x ekseninde hareket baþlat
+            // y ekseninde easeinout hareket baþlat iki tane yukarýya ve aþaðýya
+            //refBall.RunActions(//Async(
+            //new Parallel(
+            //new MoveTo(duration: fixedTime, position: new Vector3(peekedPosition.X, 0.0f, refZ))//,
+
+            /*new EaseInOut(
+                 new MoveBy(duration: fixedTime / 2, position: new Vector3(0.0f, refBallHeight, 0.0f)), 1.0f
+                ),
+            new EaseInOut(
+                 new MoveBy(duration: fixedTime / 2, position: new Vector3(0.0f, -refBallHeight, 0.0f)), 1.0f
+                )*/
+            //)
+            //);
+        }
+
     }
     public class Piece : Component
     {
@@ -394,13 +455,18 @@ namespace Nonstop.Forms.Game
 
         GameResult gameResult;
         Node cameraNode;
-        
-        public Piece(Urho.Color color, GameResult gr, Node cn, string modelName)
+        Node refBall;
+
+        Game urhoGame;
+
+        public Piece(Urho.Color color, GameResult gr, Node cn, Node rb, Game g, string modelName)
         {
             this.color = color;
             this.gameResult = gr;
             this.cameraNode = cn;
+            this.refBall = rb;
             this.modelName = modelName;
+            this.urhoGame = g;
 
             ReceiveSceneUpdates = true;
         }
@@ -415,22 +481,82 @@ namespace Nonstop.Forms.Game
             
             base.OnAttachedToNode(node);
         }
-        protected override void OnUpdate(float timeStep)
+        /*protected override void OnUpdate(float timeStep)
         {
             base.OnUpdate(timeStep);
             
-            if (itself.Parent.Position.Z < cameraNode.Position.Z + 14.0f)
+            /*if (itself.Parent.Position.Z < refBall.Position.Z)
             {
-                scaleFactor += 0.006f;
-                _base.Scale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
-            }
-
-            /*if (itself.Parent.Position.Z < cameraNode.Position.Z)
-            {
+                urhoGame.removeElement();
                 itself.Parent.Remove();
                 gameResult.incraseCurrentMiss();
                 //Console.WriteLine("Node Removed");
             }*/
+        //}*/
+
+        public Vector3 getItselfPosition()
+        {
+            return itself.Parent.Position;
+        }
+        public void removeItself()
+        {
+            // play removing animation here
+            itself.Parent.Remove();
+        }
+    }
+    public class ReferenceBall : Component
+    {
+        Node _base;
+        Node itself;
+        StaticModel model;
+        Urho.Color color;
+        string modelName;
+        float scaleFactor = 0.2f;
+
+        GameResult gameResult;
+        Node cameraNode;
+
+        Game urhoGame;
+
+        public ReferenceBall(Urho.Color color, GameResult gr, Node cn, Game g, string modelName)
+        {
+            this.color = color;
+            this.gameResult = gr;
+            this.cameraNode = cn;
+            this.modelName = modelName;
+            this.urhoGame = g;
+
+            ReceiveSceneUpdates = true;
+        }
+        public override void OnAttachedToNode(Node node)
+        {
+            this._base = node;
+            itself = node.CreateChild();
+            itself.Scale = new Vector3(1.0f, 1.0f, 1.0f); //means zero height
+            _base.Scale = new Vector3(0.12f, 0.12f, 0.12f);
+            model = node.CreateComponent<StaticModel>();
+            model.Model = Application.ResourceCache.GetModel("Models/" + modelName + ".mdl");
+            model.SetMaterial(Application.ResourceCache.GetMaterial("Materials/" + modelName + ".xml"));
+
+            base.OnAttachedToNode(node);
+        }
+        protected override void OnUpdate(float timeStep)
+        {
+            base.OnUpdate(timeStep);
+
+            Piece nearPiece = urhoGame.piecesStack.Peek();
+
+            if (itself.Parent.Position.Z >= nearPiece.getItselfPosition().Z)
+            {
+                urhoGame.removeElement();
+                nearPiece.removeItself();
+                gameResult.incraseCurrentMiss();
+                //Console.WriteLine("Node Removed");
+            }
+        }
+        public Vector3 getItselfPosition()
+        {
+            return itself.Parent.Position;
         }
     }
 }

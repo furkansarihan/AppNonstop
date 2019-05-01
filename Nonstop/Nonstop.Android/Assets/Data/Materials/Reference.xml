@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<material>
+	<technique name="Techniques/NoTexture.xml" quality="0" loddistance="0" />
+	<parameter name="MatDiffColor" value="0.379 0.976 0.912 0.779" />
+	<parameter name="MatSpecColor" value="0.000 0.011 1.000 100.000" />
+	<parameter name="MatEmissiveColor" value="0.528 0.000 0.000 0.533" />
+	<parameter name="MatEnvMapColor" value="0.000 0.000 0.000 0.000" />
+  
+	<cull value="ccw" />
+	<shadowcull value="ccw" />
+	<fill value="solid" />
+	<depthbias constant="0" slopescaled="0" />
+	<renderorder value="128" />
+	<occlusion enable="false" />
+</material>
