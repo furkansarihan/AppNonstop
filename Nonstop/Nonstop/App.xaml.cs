@@ -48,8 +48,9 @@ namespace Nonstop
             {
                 //
             }*/
-            MainPage = new NavigationPage(new SpotifyConnectionPage(this));
-           // MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
+            //MainPage = new NavigationPage(new SpotifyConnectionPage(this));
+            MainPage = new LoadingPage("Connecting to Spotify");
+            //MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
             MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.FromHex("#000000"));
 
         }

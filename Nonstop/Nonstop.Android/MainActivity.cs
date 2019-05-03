@@ -31,6 +31,10 @@ namespace Nonstop.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
+
+            // FFimageloader spesific code
+            FFImageLoading.Forms.Platform.CachedImageRenderer.Init(enableFastRenderer: false);
+
             // comm = new SpotifyAndroidCommunicator(this);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             nonstopForms = new App(); 

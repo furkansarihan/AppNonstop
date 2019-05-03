@@ -33,6 +33,9 @@
     <None Remove="Analysis\Response\1NeLwFETswx8Fzxl2AFl91_xdata.json" />
     <None Remove="Analysis\Response\2LD2gT7gwAurzdQDQtILds_xdata.json" />
     <None Remove="Analysis\Response\4kJWtxDDNb9oAk3h7sX3N4_xdata.json" />
+    <None Remove="l-a-1.gif" />
+    <None Remove="l-a-2.gif" />
+    <None Remove="l-a-3.gif" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +65,7 @@
     <EmbeddedResource Include="Entity\Spotify\track.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="l-a-2.gif" />
   </ItemGroup>
 
   <ItemGroup>
@@ -71,7 +75,12 @@
     <PackageReference Include="PCLStorage" Version="1.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
     <PackageReference Include="UrhoSharp.Forms" Version="1.8.93" />
-    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
+    <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.6.929" />
+    <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.6.929" />
+    <PackageReference Include="Xamarin.FFImageLoading.Svg" Version="2.4.6.929" />
+    <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.6.929" />
+    <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.6.929" />
+    <PackageReference Include="Xamarin.Forms" Version="3.6.0.344457" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,6 +106,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Pages\LoadingPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Pages\WelcomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

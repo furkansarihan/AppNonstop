@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             x:Class="Nonstop.Forms.Pages.LoadingPage"
+             BackgroundColor="Black">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.4*"/>
+                <RowDefinition Height="0.2*"/>
+                <RowDefinition Height="0.5*"/>
+            </Grid.RowDefinitions>
+            <Grid BackgroundColor="Black"
+                      VerticalOptions="EndAndExpand"
+                      Grid.Row="1">
+                <Label x:Name="LoadingPageMessage"
+                       Margin="16"
+                       Font="None,20"
+                       TextColor="Gray"
+                       BackgroundColor="Black">
+                    <Label.FontFamily>
+                        <OnPlatform x:TypeArguments="x:String">
+                            <On Platform="Android" Value="Fonts/Futura-medium-bt.ttf#Futura-medium-bt" />
+                        </OnPlatform>
+                    </Label.FontFamily>
+                </Label>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid BackgroundColor="Black"
+                      VerticalOptions="EndAndExpand"
+                      Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="0.3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"/>
+                </Grid.RowDefinitions>
+                <Label Text='Loading'
+                       BackgroundColor="Black"
+                           TextColor="#84c1ff"
+                           Font="Bold,53"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           VerticalTextAlignment="Center"
+                           Margin="16">
+                    <Label.FontFamily>
+                        <OnPlatform x:TypeArguments="x:String">
+                            <On Platform="Android" Value="Fonts/Futura-medium-bt.ttf#Futura-medium-bt" />
+                        </OnPlatform>
+                    </Label.FontFamily>
+                </Label>
+                <ffimageloading:CachedImage Source="resource://Nonstop.Forms.l-a-2.gif" 
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="16">
+                </ffimageloading:CachedImage>
+
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
