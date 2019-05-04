@@ -23,7 +23,7 @@ namespace Nonstop
         bool gameActive = false;
 
         public App()
-        {
+        {   
             InitializeComponent();
 
             // Generating Objects and setting App references
@@ -49,7 +49,9 @@ namespace Nonstop
                 //
             }*/
             //MainPage = new NavigationPage(new SpotifyConnectionPage(this));
-            MainPage = new LoadingPage("Connecting to Spotify");
+            //MainPage = new LoadingPage("Connecting to Spotify");
+            MainPage = new PlayListsPage();
+
             //MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.FromHex("#FFFFFF"));
             MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.FromHex("#000000"));
 

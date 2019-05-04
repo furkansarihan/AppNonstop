@@ -33,9 +33,14 @@
     <None Remove="Analysis\Response\1NeLwFETswx8Fzxl2AFl91_xdata.json" />
     <None Remove="Analysis\Response\2LD2gT7gwAurzdQDQtILds_xdata.json" />
     <None Remove="Analysis\Response\4kJWtxDDNb9oAk3h7sX3N4_xdata.json" />
+    <None Remove="gray-bg-light.png" />
     <None Remove="l-a-1.gif" />
     <None Remove="l-a-2.gif" />
     <None Remove="l-a-3.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="gray-bg-light.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -107,6 +112,9 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Pages\LoadingPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\PlayListsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Pages\WelcomePage.xaml">

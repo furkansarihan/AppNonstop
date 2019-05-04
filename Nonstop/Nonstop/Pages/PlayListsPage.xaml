@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             x:Class="Nonstop.Forms.Pages.PlayListsPage">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.16*"/>
+                <RowDefinition Height="0.84*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0"
+                  BackgroundColor="Accent">
+                <Label Text="Your Playlists"
+                       Margin="16"
+                       Font="None,45"
+                       TextColor="Gray"
+                       BackgroundColor="Aqua"
+                       VerticalOptions="End">
+                    <Label.FontFamily>
+                        <OnPlatform x:TypeArguments="x:String">
+                            <On Platform="Android" Value="Fonts/Futura-medium-bt.ttf#Futura-medium-bt" />
+                        </OnPlatform>
+                    </Label.FontFamily>
+                </Label>
+            </Grid>
+            <ScrollView Grid.Row="1"
+                        BackgroundColor="CadetBlue">
+                <ListView x:Name="listView" ItemsSource="{Binding playlists}" RowHeight="182">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Label Text="{Binding Title}"
+                                           Margin="4,0,4,16"
+                                           Grid.Column="1"
+                                           VerticalOptions="End"
+                                           LineBreakMode="TailTruncation">
+                                    </Label>
+                                    <Label Text="Total Count"
+                                           Margin="16"
+                                           Grid.Column="1"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation">
+                                    </Label>
+                                    <Label Margin="16"
+                                           Grid.Column="1"
+                                           Grid.Row="0"
+                                           VerticalOptions="Center"
+                                           Text="{Binding Count}"
+                                           LineBreakMode="TailTruncation">
+                                    </Label>
+                                    <Image Margin="4,0,0,16"
+                                           Grid.Column="0"
+                                           Grid.Row="0"
+                                           VerticalOptions="Center"
+                                           Source="{Binding Image}"
+                                           Aspect="AspectFill"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
